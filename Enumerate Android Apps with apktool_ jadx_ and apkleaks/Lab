@@ -1,0 +1,555 @@
+Enumerate Android Apps with apktool, jadx, and apkleaks
+Objectives
+By the end of this lab, students will be able to:
+
+Decompile Android APK files using apktool to extract resources and manifest files
+Analyze decompiled Java source code using JADX for security vulnerabilities
+Extract hardcoded secrets and sensitive information using apkleaks
+Automate APK security analysis with Python scripts
+Generate comprehensive security assessment reports
+Prerequisites
+Basic understanding of Android application architecture
+Familiarity with Linux command-line operations
+Basic knowledge of Java and Python programming
+Understanding of mobile application security concepts
+Lab Environment
+Your cloud machine comes pre-configured with:
+
+Ubuntu 22.04 LTS
+Java Development Kit (JDK) 11
+Python 3.10
+apktool, JADX, and apkleaks pre-installed
+Sample APK files for testing
+Access your environment by clicking Start Lab.
+
+Task 1: Decompile APK Files with apktool
+Step 1.1: Setup Working Environment
+Create organized directories for analysis:
+
+# Create working directory structure
+mkdir -p ~/android_analysis/{apktool_output,jadx_output,apkleaks_output,scripts}
+cd ~/android_analysis
+
+# Verify apktool installation
+apktool --version
+Step 1.2: Download and Analyze Sample APK
+# Download OWASP test APK
+wget -O sample_app.apk "https://github.com/OWASP/MSTG-Hacking-Playground/raw/master/Android/MSTG-Android-Java-App/app/build/outputs/apk/debug/app-debug.apk"
+
+# Verify APK file
+file sample_app.apk
+ls -lh sample_app.apk
+Step 1.3: Decompile APK with apktool
+# Decompile the APK
+apktool d sample_app.apk -o apktool_output/sample_app
+
+# Explore decompiled structure
+cd apktool_output/sample_app
+ls -la
+
+# View AndroidManifest.xml
+cat AndroidManifest.xml
+Step 1.4: Analyze Manifest for Security Issues
+# Check for dangerous permissions
+grep -E "permission" AndroidManifest.xml
+
+# Look for exported components
+grep "android:exported" AndroidManifest.xml
+
+# Check debug mode
+grep "debuggable" AndroidManifest.xml
+
+# Examine string resources
+find res/values* -name "*.xml" -exec grep -l "password\|key\|token" {} \;
+Step 1.5: Create APK Decompiler Script
+Create scripts/apk_decompiler.py:
+
+#!/usr/bin/env python3
+import os
+import subprocess
+import sys
+import argparse
+
+class APKDecompiler:
+    def __init__(self, apk_path, output_dir):
+        self.apk_path = apk_path
+        self.output_dir = output_dir
+        
+    def decompile_apk(self):
+        """
+        Decompile APK using apktool
+        
+        TODO: Implement subprocess call to apktool
+        TODO: Handle errors and return status
+        TODO: Print success/failure messages
+        """
+        pass
+    
+    def analyze_manifest(self):
+        """
+        Analyze AndroidManifest.xml for security issues
+        
+        TODO: Read manifest file from output directory
+        TODO: Check for dangerous permissions (list provided below)
+        TODO: Check for exported components
+        TODO: Check for debug mode enabled
+        TODO: Print findings
+        
+        Dangerous permissions to check:
+        - WRITE_EXTERNAL_STORAGE
+        - READ_EXTERNAL_STORAGE
+        - CAMERA
+        - RECORD_AUDIO
+        - ACCESS_FINE_LOCATION
+        - READ_CONTACTS
+        - SEND_SMS
+        """
+        pass
+    
+    def find_hardcoded_strings(self):
+        """
+        Search for hardcoded sensitive strings in resources
+        
+        TODO: Search res/values directories for XML files
+        TODO: Look for patterns: password, key, token, secret, api
+        TODO: Report findings with file paths
+        """
+        pass
+
+def main():
+    parser = argparse.ArgumentParser(description='APK Decompiler and Analyzer')
+    parser.add_argument('apk_path', help='Path to APK file')
+    parser.add_argument('-o', '--output', default='decompiled_apk', help='Output directory')
+    
+    args = parser.parse_args()
+    
+    # TODO: Validate APK file exists
+    # TODO: Create decompiler instance
+    # TODO: Run decompilation and analysis
+    # TODO: Handle exceptions
+
+if __name__ == "__main__":
+    main()
+Test the script structure:
+
+chmod +x scripts/apk_decompiler.py
+python3 scripts/apk_decompiler.py --help
+Task 2: Analyze Source Code with JADX
+Step 2.1: Decompile APK to Java Source
+cd ~/android_analysis
+
+# Decompile APK to Java source code
+jadx -d jadx_output/sample_app_java sample_app.apk
+
+# Navigate to decompiled code
+cd jadx_output/sample_app_java
+
+# List Java files
+find . -name "*.java" | head -20
+Step 2.2: Search for Security Vulnerabilities
+# Search for hardcoded credentials
+grep -r -i "password\|secret\|key\|token" --include="*.java" . | head -10
+
+# Look for SQL injection patterns
+grep -r "rawQuery\|execSQL" --include="*.java" .
+
+# Check for insecure HTTP connections
+grep -r "http://" --include="*.java" .
+
+# Find cryptographic implementations
+grep -r -i "cipher\|encrypt\|decrypt" --include="*.java" .
+
+# Look for WebView vulnerabilities
+grep -r "setJavaScriptEnabled\|addJavascriptInterface" --include="*.java" .
+Step 2.3: Create Java Code Analyzer Script
+Create scripts/java_analyzer.py:
+
+#!/usr/bin/env python3
+import os
+import re
+import json
+from pathlib import Path
+
+class JavaCodeAnalyzer:
+    def __init__(self, source_dir):
+        self.source_dir = source_dir
+        self.vulnerabilities = []
+        
+    def find_java_files(self):
+        """
+        Find all Java files in the source directory
+        
+        TODO: Walk through directory tree
+        TODO: Collect all .java file paths
+        TODO: Return list of file paths
+        """
+        pass
+    
+    def analyze_hardcoded_secrets(self, file_path):
+        """
+        Analyze file for hardcoded secrets
+        
+        TODO: Define regex patterns for:
+            - Passwords: (password|pwd)\s*[=:]\s*["']([^"']+)["']
+            - API keys: (api[_-]?key|apikey)\s*[=:]\s*["']([^"']+)["']
+            - Tokens: (secret|token)\s*[=:]\s*["']([^"']+)["']
+        TODO: Read file content
+        TODO: Search for patterns
+        TODO: Add findings to vulnerabilities list
+        """
+        pass
+    
+    def analyze_sql_injection(self, file_path):
+        """
+        Check for SQL injection vulnerabilities
+        
+        TODO: Define patterns for unsafe SQL operations:
+            - rawQuery with string concatenation
+            - execSQL with string concatenation
+        TODO: Search file for patterns
+        TODO: Report potential vulnerabilities
+        """
+        pass
+    
+    def analyze_insecure_connections(self, file_path):
+        """
+        Check for insecure HTTP connections
+        
+        TODO: Search for http:// URLs (not https://)
+        TODO: Report insecure connections with URLs
+        """
+        pass
+    
+    def analyze_webview_security(self, file_path):
+        """
+        Check for WebView security issues
+        
+        TODO: Look for setJavaScriptEnabled(true)
+        TODO: Look for addJavascriptInterface usage
+        TODO: Report potential XSS vulnerabilities
+        """
+        pass
+    
+    def run_analysis(self):
+        """
+        Run comprehensive analysis on all Java files
+        
+        TODO: Get list of Java files
+        TODO: Run all analysis methods on each file
+        TODO: Return vulnerabilities list
+        """
+        pass
+    
+    def generate_report(self, output_file):
+        """
+        Generate JSON analysis report
+        
+        TODO: Run analysis
+        TODO: Count vulnerabilities by severity
+        TODO: Create report dictionary
+        TODO: Save to JSON file
+        TODO: Print summary
+        """
+        pass
+
+def main():
+    import sys
+    if len(sys.argv) != 2:
+        print("Usage: python3 java_analyzer.py <source_directory>")
+        sys.exit(1)
+    
+    # TODO: Validate directory exists
+    # TODO: Create analyzer instance
+    # TODO: Generate report
+
+if __name__ == "__main__":
+    main()
+Task 3: Extract Secrets with apkleaks
+Step 3.1: Install and Verify apkleaks
+# Install apkleaks
+pip3 install apkleaks
+
+# Verify installation
+apkleaks --version
+Step 3.2: Run Basic Secret Extraction
+cd ~/android_analysis
+
+# Run apkleaks with text output
+apkleaks -f sample_app.apk -o apkleaks_output/secrets_report.txt
+
+# View results
+cat apkleaks_output/secrets_report.txt
+
+# Run with JSON output
+apkleaks -f sample_app.apk -o apkleaks_output/secrets_report.json --json
+Step 3.3: Create Custom Pattern File
+Create apkleaks_output/custom_patterns.json:
+
+{
+  "patterns": [
+    {
+      "name": "AWS Access Key",
+      "regex": "AKIA[0-9A-Z]{16}"
+    },
+    {
+      "name": "Google API Key",
+      "regex": "AIza[0-9A-Za-z\\-_]{35}"
+    },
+    {
+      "name": "Firebase URL",
+      "regex": "https://[a-z0-9-]+\\.firebaseio\\.com"
+    },
+    {
+      "name": "JWT Token",
+      "regex": "eyJ[A-Za-z0-9-_=]+\\.[A-Za-z0-9-_=]+\\.?[A-Za-z0-9-_.+/=]*"
+    },
+    {
+      "name": "Private Key",
+      "regex": "-----BEGIN (RSA |EC )?PRIVATE KEY-----"
+    }
+  ]
+}
+Run with custom patterns:
+
+apkleaks -f sample_app.apk -o apkleaks_output/detailed_secrets.json --json -p apkleaks_output/custom_patterns.json
+Task 4: Automate Comprehensive Analysis
+Step 4.1: Create Comprehensive Analyzer Script
+Create scripts/comprehensive_analyzer.py:
+
+#!/usr/bin/env python3
+import os
+import json
+import subprocess
+import argparse
+import datetime
+from pathlib import Path
+
+class ComprehensiveAPKAnalyzer:
+    def __init__(self, apk_path, output_dir):
+        self.apk_path = apk_path
+        self.output_dir = output_dir
+        self.results = {
+            'apk_info': {},
+            'apktool_analysis': {},
+            'jadx_analysis': {},
+            'apkleaks_analysis': {},
+            'summary': {}
+        }
+        Path(self.output_dir).mkdir(parents=True, exist_ok=True)
+    
+    def get_apk_info(self):
+        """
+        Extract basic APK information using aapt
+        
+        TODO: Run 'aapt dump badging' command
+        TODO: Parse output for package name, version code, version name
+        TODO: Store in self.results['apk_info']
+        """
+        pass
+    
+    def run_apktool_analysis(self):
+        """
+        Run apktool decompilation and analyze manifest
+        
+        TODO: Run apktool decompile command
+        TODO: Read AndroidManifest.xml
+        TODO: Check for security issues:
+            - android:debuggable="true"
+            - android:allowBackup="true"
+            - android:exported="true"
+        TODO: Store results
+        """
+        pass
+    
+    def run_jadx_analysis(self):
+        """
+        Run JADX decompilation
+        
+        TODO: Run jadx command
+        TODO: Count Java files generated
+        TODO: Store results with file count
+        """
+        pass
+    
+    def run_apkleaks_analysis(self):
+        """
+        Run apkleaks secret extraction
+        
+        TODO: Run apkleaks with JSON output
+        TODO: Parse JSON results
+        TODO: Count secrets found
+        TODO: Store results
+        """
+        pass
+    
+    def generate_summary(self):
+        """
+        Generate analysis summary
+        
+        TODO: Count total security issues
+        TODO: List critical findings
+        TODO: Generate recommendations based on findings
+        TODO: Store in self.results['summary']
+        """
+        pass
+    
+    def save_results(self):
+        """
+        Save analysis results to JSON file
+        
+        TODO: Write self.results to JSON file
+        TODO: Print summary to console
+        """
+        pass
+    
+    def run_full_analysis(self):
+        """
+        Run complete APK analysis pipeline
+        
+        TODO: Call all analysis methods in sequence
+        TODO: Handle errors gracefully
+        """
+        pass
+
+def main():
+    parser = argparse.ArgumentParser(description='Comprehensive APK Security Analyzer')
+    parser.add_argument('apk_path', help='Path to APK file')
+    parser.add_argument('-o', '--output', default='analysis_output', help='Output directory')
+    
+    args = parser.parse_args()
+    
+    # TODO: Validate APK file exists
+    # TODO: Create analyzer instance
+    # TODO: Run full analysis
+
+if __name__ == "__main__":
+    main()
+Step 4.2: Create HTML Report Generator
+Create scripts/generate_report.py:
+
+#!/usr/bin/env python3
+import json
+import sys
+from datetime import datetime
+
+def generate_html_report(json_file, output_file):
+    """
+    Generate HTML report from JSON analysis results
+    
+    TODO: Read JSON analysis file
+    TODO: Create HTML structure with:
+        - Header with APK info and summary
+        - Critical findings section
+        - APK information table
+        - Security recommendations
+        - Analysis details from each tool
+    TODO: Write HTML to output file
+    
+    HTML should include:
+    - Professional styling with CSS
+    - Color-coded severity levels
+    - Tables for structured data
+    - Lists for findings and recommendations
+    """
+    pass
+
+def main():
+    if len(sys.argv) != 3:
+        print("Usage: python3 generate_report.py <json_file> <output_html>")
+        sys.exit(1)
+    
+    # TODO: Validate input file exists
+    # TODO: Generate HTML report
+    # TODO: Print success message
+
+if __name__ == "__main__":
+    main()
+Step 4.3: Run Complete Analysis Pipeline
+cd ~/android_analysis
+
+# Run comprehensive analysis
+python3 scripts/comprehensive_analyzer.py sample_app.apk -o final_analysis
+
+# Generate HTML report
+python3 scripts/generate_report.py final_analysis/comprehensive_analysis.json final_analysis/report.html
+
+# View results
+cat final_analysis/comprehensive_analysis.json | jq '.summary'
+Step 4.4: Analyze Multiple APKs
+Create a batch analysis script:
+
+#!/bin/bash
+# batch_analyze.sh
+
+APK_DIR="$1"
+OUTPUT_DIR="$2"
+
+if [ -z "$APK_DIR" ] || [ -z "$OUTPUT_DIR" ]; then
+    echo "Usage: ./batch_analyze.sh <apk_directory> <output_directory>"
+    exit 1
+fi
+
+mkdir -p "$OUTPUT_DIR"
+
+for apk in "$APK_DIR"/*.apk; do
+    apk_name=$(basename "$apk" .apk)
+    echo "[+] Analyzing $apk_name..."
+    
+    python3 scripts/comprehensive_analyzer.py "$apk" -o "$OUTPUT_DIR/$apk_name"
+    python3 scripts/generate_report.py "$OUTPUT_DIR/$apk_name/comprehensive_analysis.json" "$OUTPUT_DIR/$apk_name/report.html"
+done
+
+echo "[+] Batch analysis complete. Results in $OUTPUT_DIR"
+Make executable and test:
+
+chmod +x batch_analyze.sh
+# ./batch_analyze.sh /path/to/apks /path/to/output
+Expected Outcomes
+After completing this lab, you should have:
+
+Successfully decompiled APK files using apktool
+Extracted and analyzed Java source code with JADX
+Identified hardcoded secrets using apkleaks
+Created automated analysis scripts in Python
+Generated comprehensive security reports
+Understanding of common Android security vulnerabilities
+Your analysis should identify issues such as:
+
+Hardcoded API keys and passwords
+Debug mode enabled in production
+Insecure HTTP connections
+Exported components without proper protection
+SQL injection vulnerabilities
+Weak cryptographic implementations
+Troubleshooting Tips
+apktool fails to decompile:
+
+Ensure Java is properly installed: java -version
+Try forcing decompilation: apktool d -f sample_app.apk
+Check APK file integrity: file sample_app.apk
+JADX produces no output:
+
+Verify JADX installation: jadx --version
+Check available disk space: df -h
+Try with verbose output: jadx -v -d output sample_app.apk
+apkleaks not finding secrets:
+
+Verify apkleaks installation: pip3 show apkleaks
+Check custom patterns file syntax
+Try without custom patterns first
+Python scripts fail:
+
+Check Python version: python3 --version (should be 3.6+)
+Install missing modules: pip3 install -r requirements.txt
+Verify file permissions: chmod +x scripts/*.py
+Conclusion
+This lab provided hands-on experience with essential Android APK analysis tools. You learned to decompile APKs, analyze source code for vulnerabilities, extract hardcoded secrets, and automate the security assessment process. These skills are fundamental for mobile application security testing and vulnerability research.
+
+Key takeaways:
+
+apktool extracts resources and manifest files for analysis
+JADX decompiles DEX bytecode to readable Java source
+apkleaks automates secret detection with pattern matching
+Python automation enables scalable security assessments
+Comprehensive analysis requires multiple complementary tools
+Continue practicing with different APK files to refine your analysis skills and expand your understanding of Android security vulnerabilities.
