@@ -1,0 +1,39 @@
+# Threat Intelligence Integration Configuration
+data_sources:
+  telemetry:
+    path: ../data/telemetry/security_telemetry.json
+    enabled: true
+    refresh_interval: 300
+  
+  network:
+    path: ../data/network/network_analysis.json
+    enabled: true
+    refresh_interval: 300
+
+threat_model:
+  output_path: ../data/threat-models/updated_threat_model.json
+  backup_enabled: true
+  backup_retention_days: 30
+
+alerting:
+  enabled: true
+  thresholds:
+    new_techniques: 3
+    high_frequency: 20
+    critical_severity: 5
+  
+  channels:
+    - type: log
+      path: ../logs/alerts.log
+    - type: file
+      path: ../logs/alerts.json
+
+reporting:
+  enabled: true
+  output_path: ../output/threat_report.json
+  schedule: "0 */6 * * *"  # Every 6 hours
+
+monitoring:
+  metrics_enabled: true
+  dashboard_path: ../output/metrics.json
+  update_interval: 60
