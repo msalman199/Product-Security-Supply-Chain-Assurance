@@ -1,0 +1,380 @@
+ Process Product Telemetry Data in Jupyter + Pandas
+Objectives
+By the end of this lab, students will be able to:
+
+Set up Jupyter Notebook environment for telemetry data analysis
+Use Pandas to load, clean, and process product telemetry datasets
+Perform statistical analysis and anomaly detection on telemetry data
+Create visualizations using Matplotlib to interpret telemetry patterns
+Automate data processing workflows with Python scripts
+Prerequisites
+Students should have:
+
+Basic Python programming knowledge (variables, functions, loops)
+Familiarity with CSV file format
+Understanding of basic statistics (mean, standard deviation)
+Lab Environment Setup
+Ready-to-Use Cloud Machines: Click Start Lab to access your pre-configured Linux environment with Python 3.8+, Jupyter Notebook, Pandas, Matplotlib, and NumPy pre-installed.
+
+Task 1: Generate Sample Telemetry Data
+Step 1.1: Create Project Structure
+mkdir -p ~/telemetry_lab/{data,notebooks,scripts,output}
+cd ~/telemetry_lab
+Step 1.2: Create Data Generation Script
+Create scripts/generate_telemetry.py:
+
+import pandas as pd
+import numpy as np
+from datetime import datetime, timedelta
+import random
+
+def generate_telemetry_data():
+    """
+    Generate sample product telemetry data for IoT devices.
+    Creates 5000 records with device metrics and anomalies.
+    """
+    np.random.seed(42)
+    random.seed(42)
+    
+    # TODO: Define product types list
+    # TODO: Define locations list
+    # TODO: Set date range (30 days)
+    
+    telemetry_records = []
+    
+    # TODO: Loop to generate 5000 records
+    # TODO: For each record, create timestamp
+    # TODO: Generate device_id, product_type, location
+    # TODO: Generate metrics based on product type:
+    #       - temperature_celsius (use np.random.normal)
+    #       - cpu_usage_percent
+    #       - memory_usage_percent
+    #       - power_consumption_watts
+    #       - network_latency_ms
+    #       - error_count
+    # TODO: Add 5% anomalies (spike values randomly)
+    # TODO: Append record dictionary to list
+    
+    # TODO: Create DataFrame from records
+    # TODO: Sort by timestamp
+    # TODO: Save to 'data/product_telemetry.csv'
+    
+    print(f"Generated telemetry data saved to data/product_telemetry.csv")
+
+if __name__ == "__main__":
+    generate_telemetry_data()
+Step 1.3: Execute Data Generation
+cd ~/telemetry_lab
+python3 scripts/generate_telemetry.py
+ls -lh data/
+head -5 data/product_telemetry.csv
+Task 2: Analyze Telemetry Data with Pandas
+Step 2.1: Launch Jupyter Notebook
+cd ~/telemetry_lab
+jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser --allow-root
+Copy the URL with token to access Jupyter in your browser.
+
+Step 2.2: Create Analysis Notebook
+In Jupyter, create notebooks/Telemetry_Analysis.ipynb.
+
+Cell 1: Import Libraries
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from datetime import datetime
+import warnings
+warnings.filterwarnings('ignore')
+
+# Set display options
+pd.set_option('display.max_columns', None)
+plt.style.use('seaborn-v0_8-darkgrid')
+
+print("Libraries loaded successfully!")
+Cell 2: Load and Explore Data
+
+# TODO: Load CSV file into DataFrame
+# telemetry_df = pd.read_csv(...)
+
+# TODO: Convert 'timestamp' column to datetime
+
+# TODO: Display basic information:
+#       - Shape of dataset
+#       - Column names
+#       - First 5 rows
+#       - Data types
+#       - Basic statistics with .describe()
+
+# TODO: Check for missing values with .isnull().sum()
+Cell 3: Data Cleaning
+
+def clean_telemetry_data(df):
+    """
+    Clean and preprocess telemetry data.
+    
+    Args:
+        df: Raw telemetry DataFrame
+    
+    Returns:
+        Cleaned DataFrame
+    """
+    # TODO: Remove duplicate records
+    # TODO: Handle missing values (fill or drop)
+    # TODO: Ensure numeric columns are correct type
+    # TODO: Filter out invalid values (negative percentages, etc.)
+    # TODO: Return cleaned DataFrame
+    pass
+
+# TODO: Apply cleaning function
+# cleaned_df = clean_telemetry_data(telemetry_df)
+Cell 4: Statistical Analysis
+
+# TODO: Group by product_type and calculate:
+#       - Mean temperature
+#       - Mean CPU usage
+#       - Mean memory usage
+#       - Mean power consumption
+
+# TODO: Find devices with highest error counts
+
+# TODO: Calculate correlation matrix for numeric columns
+
+# TODO: Identify top 10 devices by power consumption
+Cell 5: Anomaly Detection
+
+def detect_temperature_anomalies(df, std_threshold=2):
+    """
+    Detect temperature anomalies using statistical method.
+    
+    Args:
+        df: Telemetry DataFrame
+        std_threshold: Number of standard deviations for threshold
+    
+    Returns:
+        DataFrame with anomalies
+    """
+    # TODO: Calculate mean and std of temperature
+    # TODO: Define upper and lower bounds
+    # TODO: Filter records outside bounds
+    # TODO: Return anomaly DataFrame
+    pass
+
+def detect_performance_anomalies(df, cpu_threshold=80, memory_threshold=90):
+    """
+    Detect performance anomalies based on resource usage.
+    
+    Args:
+        df: Telemetry DataFrame
+        cpu_threshold: CPU usage threshold percentage
+        memory_threshold: Memory usage threshold percentage
+    
+    Returns:
+        DataFrame with performance anomalies
+    """
+    # TODO: Filter records exceeding thresholds
+    # TODO: Return anomaly DataFrame
+    pass
+
+# TODO: Apply anomaly detection functions
+# TODO: Print number of anomalies found
+# TODO: Display sample anomalies
+Cell 6: Time Series Analysis
+
+# TODO: Set timestamp as index
+
+# TODO: Resample data by hour and calculate mean metrics
+
+# TODO: Resample by day and calculate:
+#       - Daily average temperature
+#       - Daily max CPU usage
+#       - Daily total power consumption
+
+# TODO: Extract hour from timestamp
+# TODO: Group by hour to find peak usage times
+
+# TODO: Calculate rolling average (window=24 hours) for temperature
+Task 3: Visualize Telemetry Data
+Step 3.1: Distribution Visualizations
+# Create figure with subplots
+fig, axes = plt.subplots(2, 2, figsize=(14, 10))
+
+# TODO: Plot 1 - Product type distribution (pie chart)
+# axes[0, 0].pie(...)
+
+# TODO: Plot 2 - Temperature histogram
+# axes[0, 1].hist(...)
+
+# TODO: Plot 3 - CPU vs Memory scatter plot
+# axes[1, 0].scatter(...)
+
+# TODO: Plot 4 - Power consumption by product type (box plot)
+# telemetry_df.boxplot(...)
+
+plt.tight_layout()
+plt.savefig('../output/distribution_analysis.png', dpi=300)
+plt.show()
+Step 3.2: Time Series Visualizations
+fig, axes = plt.subplots(3, 1, figsize=(14, 10))
+
+# TODO: Plot 1 - Daily average temperature trend (line plot)
+# daily_temp.plot(ax=axes[0], ...)
+
+# TODO: Plot 2 - Daily average CPU usage trend (line plot)
+# daily_cpu.plot(ax=axes[1], ...)
+
+# TODO: Plot 3 - Hourly power consumption pattern (bar plot)
+# hourly_power.plot(ax=axes[2], kind='bar', ...)
+
+# TODO: Add titles, labels, and grid to each subplot
+
+plt.tight_layout()
+plt.savefig('../output/time_series_analysis.png', dpi=300)
+plt.show()
+Step 3.3: Anomaly Visualizations
+# TODO: Create scatter plot of all data points
+# TODO: Highlight anomalies in different color
+# TODO: Add legend distinguishing normal vs anomaly points
+
+# Example structure:
+# plt.figure(figsize=(12, 6))
+# plt.scatter(normal_data['timestamp'], normal_data['temperature_celsius'], ...)
+# plt.scatter(anomaly_data['timestamp'], anomaly_data['temperature_celsius'], ...)
+# plt.title('Temperature Anomalies Over Time')
+# plt.savefig('../output/anomaly_detection.png', dpi=300)
+Step 3.4: Correlation Heatmap
+# TODO: Select numeric columns for correlation
+# TODO: Calculate correlation matrix
+# TODO: Create heatmap using seaborn
+# sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', ...)
+# TODO: Save figure
+Task 4: Automate Data Processing
+Step 4.1: Create Automation Script
+Create scripts/automate_analysis.py:
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import json
+from datetime import datetime
+
+class TelemetryAnalyzer:
+    """Automated telemetry data processing and reporting."""
+    
+    def __init__(self, data_path='../data/', output_path='../output/'):
+        self.data_path = data_path
+        self.output_path = output_path
+        self.telemetry_df = None
+        self.report = {}
+    
+    def load_data(self):
+        """Load telemetry data from CSV file."""
+        # TODO: Load CSV file
+        # TODO: Convert timestamp to datetime
+        # TODO: Store in self.telemetry_df
+        # TODO: Return True if successful, False otherwise
+        pass
+    
+    def calculate_statistics(self):
+        """Calculate summary statistics for the report."""
+        # TODO: Calculate total records
+        # TODO: Calculate date range
+        # TODO: Calculate metrics by product type
+        # TODO: Store results in self.report dictionary
+        pass
+    
+    def detect_all_anomalies(self):
+        """Detect all types of anomalies."""
+        # TODO: Detect temperature anomalies
+        # TODO: Detect performance anomalies
+        # TODO: Detect power consumption anomalies
+        # TODO: Store counts in self.report
+        pass
+    
+    def generate_visualizations(self):
+        """Generate all analysis visualizations."""
+        # TODO: Create distribution plots
+        # TODO: Create time series plots
+        # TODO: Create anomaly plots
+        # TODO: Save all figures to output directory
+        pass
+    
+    def save_report(self):
+        """Save analysis report to JSON file."""
+        # TODO: Add timestamp to report
+        # TODO: Save report dictionary as JSON
+        # TODO: Print summary to console
+        pass
+    
+    def run_full_analysis(self):
+        """Execute complete analysis pipeline."""
+        print("Starting automated telemetry analysis...")
+        
+        # TODO: Call load_data()
+        # TODO: Call calculate_statistics()
+        # TODO: Call detect_all_anomalies()
+        # TODO: Call generate_visualizations()
+        # TODO: Call save_report()
+        
+        print("Analysis complete!")
+
+if __name__ == "__main__":
+    analyzer = TelemetryAnalyzer()
+    analyzer.run_full_analysis()
+Step 4.2: Execute Automation Script
+cd ~/telemetry_lab
+python3 scripts/automate_analysis.py
+Step 4.3: Review Generated Outputs
+ls -lh output/
+cat output/analysis_report.json
+Expected Outcomes
+After completing this lab, you should have:
+
+Generated synthetic telemetry dataset with 5000+ records
+Loaded and cleaned data using Pandas
+Performed statistical analysis identifying patterns and anomalies
+Created 6+ visualizations showing distributions, trends, and anomalies
+Built automated analysis pipeline for repeatable processing
+Generated JSON report with key findings
+Key Metrics to Observe:
+
+Temperature anomalies: ~5% of records
+Performance anomalies: Devices exceeding 80% CPU or 90% memory
+Power consumption patterns varying by product type
+Time-based usage trends showing peak hours
+Troubleshooting Tips
+Issue: Jupyter notebook won't start
+
+Check if port 8888 is already in use: netstat -tuln | grep 8888
+Try alternative port: jupyter notebook --port=8889
+Ensure you're in the correct directory
+Issue: Pandas cannot find CSV file
+
+Verify file path is correct relative to notebook location
+Use os.getcwd() to check current directory
+Use absolute paths if relative paths fail
+Issue: Plots not displaying in Jupyter
+
+Add %matplotlib inline at the top of notebook
+Ensure plt.show() is called after plot creation
+Check if matplotlib backend is configured correctly
+Issue: Memory errors with large datasets
+
+Load data in chunks using pd.read_csv(chunksize=1000)
+Use dtype parameter to optimize memory usage
+Filter unnecessary columns early in processing
+Conclusion
+This lab introduced practical telemetry data analysis using Pandas and Jupyter Notebook. You learned to load, clean, and analyze IoT device data, detect anomalies using statistical methods, and create meaningful visualizations. The automation script demonstrates how to build repeatable analysis pipelines for continuous monitoring.
+
+Key Takeaways:
+
+Pandas provides powerful data manipulation capabilities for telemetry analysis
+Statistical methods effectively identify anomalies in device behavior
+Visualization reveals patterns not obvious in raw data
+Automation enables scalable, consistent analysis workflows
+Next Steps:
+
+Experiment with different anomaly detection algorithms
+Integrate real-time data streams
+Build predictive models for device failures
+Create interactive dashboards using Plotly or Dash
