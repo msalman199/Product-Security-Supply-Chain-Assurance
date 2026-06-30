@@ -1,0 +1,464 @@
+Create Threat Models in Draw.io + MITRE ATT&CK Navigator
+Objectives
+By the end of this lab, students will be able to:
+
+Create visual threat models using Draw.io for system architecture documentation
+Navigate and utilize the MITRE ATT&CK Navigator to identify attack techniques
+Map attack paths and threat scenarios for web applications
+Automate threat model generation using Python scripts
+Integrate MITRE ATT&CK framework data into threat modeling workflows
+Prerequisites
+Basic understanding of cybersecurity concepts and common attack vectors
+Familiarity with Linux command line operations
+Basic Python programming knowledge
+Understanding of web application architecture
+Lab Environment
+Al Nafi provides ready-to-use Linux-based cloud machines for this lab. Click Start Lab to access your pre-configured environment with:
+
+Ubuntu 22.04 LTS
+Python 3.10+ with pip
+Firefox web browser
+Text editors (nano, vim)
+Required Python libraries pre-installed
+Task 1: Create Visual Threat Models in Draw.io
+Step 1: Access Draw.io and Set Up Workspace
+Open Firefox browser:
+firefox &
+Navigate to https://app.diagrams.net/
+Click Create New Diagram → Blank Diagram
+Name your diagram: ecommerce_threat_model
+Step 2: Design System Architecture
+Create a basic e-commerce application architecture:
+
+Add Components (from General shapes library):
+
+User Browser (rectangle, label: "User Browser")
+Web Server (rectangle, label: "Web Server")
+Database (cylinder shape, label: "Customer DB")
+Payment API (rectangle, label: "Payment Gateway")
+Connect Components (use Connector tool):
+
+User Browser → Web Server (HTTP/HTTPS)
+Web Server → Database (SQL queries)
+Web Server → Payment API (API calls)
+Add Trust Boundaries (use dashed rectangles):
+
+External Zone: User Browser
+DMZ: Web Server
+Internal Zone: Database
+Third-party: Payment API
+Step 3: Document Threats
+Add text boxes near each connection with potential threats:
+
+User → Web: "SQL Injection, XSS, CSRF, Session Hijacking"
+Web → DB: "Privilege Escalation, Data Breach, Unauthorized Access"
+Web → Payment: "MITM, API Key Exposure, Data Interception"
+Create a threat summary table using Table shape:
+
+ID    | Component    | Threat              | Impact | Likelihood
+------|--------------|---------------------|--------|------------
+T001  | Web Server   | SQL Injection       | High   | Medium
+T002  | Database     | Data Breach         | High   | Low
+T003  | Payment API  | API Key Exposure    | High   | Medium
+T004  | User Session | Session Hijacking   | Medium | High
+Save diagram: File → Save As → Device → ecommerce_threat_model.drawio
+Task 2: Map Attack Paths with MITRE ATT&CK Navigator
+Step 1: Access MITRE ATT&CK Navigator
+Open new browser tab: https://mitre-attack.github.io/attack-navigator/
+Click Create New Layer → Enterprise matrix
+Familiarize yourself with:
+Tactics: Attack stages (columns)
+Techniques: Specific attack methods (cells)
+Color coding: Customize to show threat severity
+Step 2: Create Attack Scenario
+Map a web application compromise scenario:
+
+Initial Access: Select T1190 (Exploit Public-Facing Application)
+Execution: Select T1059.007 (JavaScript)
+Persistence: Select T1505.003 (Web Shell)
+Privilege Escalation: Select T1068 (Exploitation for Privilege Escalation)
+Credential Access: Select T1555 (Credentials from Password Stores)
+Collection: Select T1005 (Data from Local System)
+Exfiltration: Select T1041 (Exfiltration Over C2 Channel)
+Step 3: Customize and Export
+For each selected technique:
+
+Right-click → Set Technique State → Enabled
+Change color to red for critical threats
+Add comments describing the attack step
+Export the layer:
+
+Layer Controls → Download Layer
+Save as ecommerce_attack_layer.json
+Document attack narrative in Layer Information section
+
+Task 3: Automate Threat Modeling with Python
+Step 1: Set Up Python Environment
+Create working directory:
+cd ~/Desktop
+mkdir threat_modeling_lab
+cd threat_modeling_lab
+Create requirements file:
+cat > requirements.txt << EOF
+requests>=2.28.0
+pandas>=1.5.0
+matplotlib>=3.6.0
+networkx>=2.8.0
+EOF
+
+pip3 install -r requirements.txt
+Step 2: Create MITRE Data Fetcher (Starter Template)
+Create mitre_fetcher.py:
+
+#!/usr/bin/env python3
+"""
+MITRE ATT&CK Data Fetcher
+Fetches and processes MITRE ATT&CK framework data
+"""
+
+import requests
+import pandas as pd
+import json
+
+class MitreAttackFetcher:
+    def __init__(self):
+        self.base_url = "https://raw.githubusercontent.com/mitre/cti/master"
+        self.enterprise_url = f"{self.base_url}/enterprise-attack/enterprise-attack.json"
+    
+    def fetch_enterprise_data(self):
+        """
+        Fetch MITRE ATT&CK Enterprise data from GitHub
+        
+        Returns:
+            dict: JSON data containing MITRE ATT&CK framework
+        """
+        # TODO: Implement HTTP GET request with error handling
+        # TODO: Return parsed JSON data
+        pass
+    
+    def extract_techniques(self, data):
+        """
+        Extract attack techniques from MITRE data
+        
+        Args:
+            data: Raw MITRE ATT&CK JSON data
+        
+        Returns:
+            list: List of technique dictionaries with id, name, tactics, platforms
+        """
+        techniques = []
+        
+        # TODO: Iterate through data['objects']
+        # TODO: Filter for type == 'attack-pattern'
+        # TODO: Extract relevant fields (id, name, tactics, platforms)
+        # TODO: Append to techniques list
+        
+        return techniques
+    
+    def save_to_csv(self, techniques, filename='mitre_techniques.csv'):
+        """
+        Save techniques to CSV file
+        
+        Args:
+            techniques: List of technique dictionaries
+            filename: Output CSV filename
+        """
+        # TODO: Convert techniques list to pandas DataFrame
+        # TODO: Handle list fields (tactics, platforms) - convert to comma-separated strings
+        # TODO: Save DataFrame to CSV
+        pass
+
+def main():
+    fetcher = MitreAttackFetcher()
+    
+    # TODO: Fetch data
+    # TODO: Extract techniques
+    # TODO: Save to CSV
+    # TODO: Print summary statistics
+    
+    pass
+
+if __name__ == "__main__":
+    main()
+Step 3: Create Threat Model Generator (Starter Template)
+Create threat_model_generator.py:
+
+#!/usr/bin/env python3
+"""
+Automated Threat Model Generator
+Creates threat models based on system components and MITRE data
+"""
+
+import pandas as pd
+import json
+import matplotlib.pyplot as plt
+import networkx as nx
+from datetime import datetime
+
+class ThreatModelGenerator:
+    def __init__(self, mitre_csv='mitre_techniques.csv'):
+        self.mitre_df = None
+        self.threat_model = {
+            'metadata': {
+                'created': datetime.now().isoformat(),
+                'version': '1.0'
+            },
+            'assets': [],
+            'threats': []
+        }
+        # TODO: Load MITRE data from CSV
+    
+    def add_asset(self, name, asset_type, trust_zone, criticality='Medium'):
+        """
+        Add an asset to the threat model
+        
+        Args:
+            name: Asset name
+            asset_type: Type (web server, database, api, etc.)
+            trust_zone: Security zone (external, dmz, internal)
+            criticality: Risk level (Low, Medium, High)
+        
+        Returns:
+            str: Asset ID
+        """
+        asset = {
+            'id': f"ASSET_{len(self.threat_model['assets']) + 1:03d}",
+            'name': name,
+            'type': asset_type,
+            'trust_zone': trust_zone,
+            'criticality': criticality
+        }
+        # TODO: Append asset to threat_model['assets']
+        # TODO: Return asset ID
+        pass
+    
+    def find_relevant_techniques(self, asset_type):
+        """
+        Find MITRE techniques relevant to asset type
+        
+        Args:
+            asset_type: Type of asset
+        
+        Returns:
+            list: Relevant MITRE techniques
+        """
+        # TODO: Filter mitre_df based on asset_type keywords
+        # TODO: For web servers: look for 'web', 'http', 'injection'
+        # TODO: For databases: look for 'data', 'sql', 'query'
+        # TODO: For APIs: look for 'api', 'service', 'endpoint'
+        # TODO: Return top 5-10 relevant techniques
+        pass
+    
+    def generate_threats_for_asset(self, asset_id):
+        """
+        Generate threats for a specific asset
+        
+        Args:
+            asset_id: Asset identifier
+        """
+        # TODO: Find asset by ID
+        # TODO: Get relevant MITRE techniques for asset type
+        # TODO: For each technique, create threat entry with:
+        #       - threat_id, asset_id, mitre_id, name, description
+        #       - likelihood (calculate based on asset criticality)
+        #       - impact (based on asset criticality)
+        #       - risk_score (likelihood * impact)
+        # TODO: Append to threat_model['threats']
+        pass
+    
+    def calculate_risk_score(self, likelihood, impact):
+        """
+        Calculate risk score from likelihood and impact
+        
+        Args:
+            likelihood: Low/Medium/High
+            impact: Low/Medium/High
+        
+        Returns:
+            int: Risk score (1-9)
+        """
+        # TODO: Map Low=1, Medium=2, High=3
+        # TODO: Return likelihood_score * impact_score
+        pass
+    
+    def generate_visualization(self, output_file='threat_model.png'):
+        """
+        Generate network graph visualization
+        
+        Args:
+            output_file: Output image filename
+        """
+        # TODO: Create networkx DiGraph
+        # TODO: Add asset nodes (blue, large)
+        # TODO: Add threat nodes (red/orange/yellow based on risk)
+        # TODO: Add edges from assets to threats
+        # TODO: Use spring_layout for positioning
+        # TODO: Draw and save figure
+        pass
+    
+    def export_json(self, filename='threat_model.json'):
+        """
+        Export threat model to JSON
+        
+        Args:
+            filename: Output JSON filename
+        """
+        # TODO: Write self.threat_model to JSON file with indent=2
+        pass
+    
+    def generate_report(self, filename='threat_report.txt'):
+        """
+        Generate text report
+        
+        Args:
+            filename: Output text filename
+        """
+        # TODO: Write formatted report with:
+        #       - Metadata
+        #       - Asset summary
+        #       - Threat summary (total, high-risk count)
+        #       - Top 10 threats by risk score
+        pass
+
+def main():
+    tmg = ThreatModelGenerator()
+    
+    # TODO: Add assets (web server, database, payment API, user browser)
+    # TODO: Generate threats for each asset
+    # TODO: Export JSON, generate report, create visualization
+    # TODO: Print summary
+    
+    pass
+
+if __name__ == "__main__":
+    main()
+Step 4: Create Draw.io Integration (Starter Template)
+Create drawio_exporter.py:
+
+#!/usr/bin/env python3
+"""
+Draw.io Integration Script
+Converts threat model JSON to Draw.io XML format
+"""
+
+import json
+import xml.etree.ElementTree as ET
+from xml.dom import minidom
+
+class DrawioExporter:
+    def __init__(self, threat_model_file='threat_model.json'):
+        # TODO: Load threat model from JSON file
+        pass
+    
+    def create_xml_structure(self):
+        """
+        Create basic Draw.io XML structure
+        
+        Returns:
+            tuple: (mxfile root element, diagram root element)
+        """
+        # TODO: Create mxfile element with required attributes
+        # TODO: Create diagram, mxGraphModel, and root elements
+        # TODO: Add default cells (id="0" and id="1")
+        # TODO: Return mxfile and root elements
+        pass
+    
+    def add_asset_node(self, asset, x, y, root):
+        """
+        Add asset as rectangle to diagram
+        
+        Args:
+            asset: Asset dictionary
+            x, y: Position coordinates
+            root: XML root element
+        
+        Returns:
+            str: Cell ID
+        """
+        # TODO: Create mxCell element for asset
+        # TODO: Set style based on criticality (color coding)
+        # TODO: Add mxGeometry with position and size
+        # TODO: Return cell ID
+        pass
+    
+    def add_threat_node(self, threat, asset_cell_id, x, y, root):
+        """
+        Add threat as note shape to diagram
+        
+        Args:
+            threat: Threat dictionary
+            asset_cell_id: Parent asset cell ID
+            x, y: Position coordinates
+            root: XML root element
+        """
+        # TODO: Create mxCell for threat (note shape)
+        # TODO: Color based on risk score (red/orange/yellow)
+        # TODO: Add connector edge from asset to threat
+        # TODO: Add geometry for both threat and connector
+        pass
+    
+    def generate_drawio_file(self, output_file='automated_threat_model.drawio'):
+        """
+        Generate complete Draw.io XML file
+        
+        Args:
+            output_file: Output filename
+        """
+        # TODO: Create XML structure
+        # TODO: Position assets in grid layout
+        # TODO: Add threats near their associated assets
+        # TODO: Write formatted XML to file
+        # TODO: Print import instructions
+        pass
+
+def main():
+    exporter = DrawioExporter()
+    # TODO: Generate Draw.io file
+    pass
+
+if __name__ == "__main__":
+    main()
+Step 5: Run Complete Automation Pipeline
+Execute scripts in order:
+chmod +x mitre_fetcher.py threat_model_generator.py drawio_exporter.py
+
+python3 mitre_fetcher.py
+python3 threat_model_generator.py
+python3 drawio_exporter.py
+Verify generated files:
+ls -lh *.csv *.json *.png *.drawio *.txt
+Import automated_threat_model.drawio into Draw.io to view results
+Expected Outcomes
+After completing this lab, you should have:
+
+Manual Threat Model: Draw.io diagram showing system architecture with documented threats
+MITRE Attack Layer: JSON file mapping attack techniques to your scenario
+MITRE Techniques Database: CSV file with extracted ATT&CK framework data
+Automated Threat Model: JSON file with structured threat data
+Visualization: PNG graph showing assets and threats with risk-based coloring
+Text Report: Summary of threats prioritized by risk score
+Draw.io Export: Automatically generated diagram file
+Troubleshooting Tips
+Issue: MITRE data fetch fails
+
+Solution: Check internet connectivity; verify GitHub URL is accessible; add timeout parameter to requests
+Issue: Matplotlib display error
+
+Solution: Set backend before importing pyplot: matplotlib.use('Agg')
+Issue: Draw.io file won't import
+
+Solution: Validate XML structure; ensure proper encoding (UTF-8); check for special characters in labels
+Issue: Empty threat list generated
+
+Solution: Verify MITRE CSV was created successfully; check asset type keywords match technique descriptions; ensure pandas DataFrame is not empty
+Issue: Python module not found
+
+Solution: Reinstall requirements: pip3 install --upgrade -r requirements.txt
+Conclusion
+This lab demonstrated practical threat modeling techniques combining manual visualization with automated analysis. You learned to:
+
+Create visual threat models documenting system architecture and security boundaries
+Leverage MITRE ATT&CK Navigator for attack path mapping
+Automate threat identification using Python and MITRE framework data
+Generate multiple output formats for different stakeholders
+These skills are essential for product security teams to systematically identify, document, and communicate security risks throughout the development lifecycle. Continue practicing by modeling different system architectures and expanding the automation scripts with additional features like risk scoring algorithms, mitigation recommendations, and integration with security tools.
