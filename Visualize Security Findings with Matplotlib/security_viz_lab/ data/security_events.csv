@@ -1,0 +1,11 @@
+timestamp,event_type,severity,source_ip,port,protocol,action,country
+2024-01-15 08:30:15,login_attempt,medium,192.168.1.100,22,SSH,blocked,US
+2024-01-15 08:31:22,malware_detection,high,203.0.113.45,80,HTTP,quarantined,CN
+2024-01-15 08:32:10,port_scan,medium,198.51.100.25,443,HTTPS,blocked,RU
+2024-01-15 08:33:45,ddos_attack,critical,203.0.113.67,80,HTTP,blocked,CN
+2024-01-15 08:34:30,unauthorized_access,high,198.51.100.89,3389,RDP,blocked,RU
+2024-01-15 08:35:12,brute_force,critical,198.51.100.156,21,FTP,blocked,RU
+2024-01-15 08:36:05,login_attempt,low,192.168.1.115,22,SSH,allowed,US
+2024-01-15 08:37:18,malware_detection,high,203.0.113.123,443,HTTPS,quarantined,CN
+2024-01-15 08:38:25,port_scan,medium,203.0.113.200,80,HTTP,blocked,CN
+2024-01-15 08:39:40,ddos_attack,critical,198.51.100.78,443,HTTPS,blocked,RU
