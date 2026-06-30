@@ -1,0 +1,505 @@
+OSINT-Based Product Reconnaissance with SpiderFoot & recon-ng
+Objectives
+By the end of this lab, students will be able to:
+
+Install and configure SpiderFoot and recon-ng for OSINT gathering
+Perform automated reconnaissance on target domains and products
+Collect intelligence from multiple open-source data sources
+Create Python scripts to automate OSINT data collection
+Analyze reconnaissance results and generate security reports
+Prerequisites
+Basic Linux command line proficiency
+Fundamental networking knowledge (DNS, domains, IP addresses)
+Python programming basics
+Understanding of cybersecurity principles
+Lab Environment
+Al Nafi provides pre-configured Linux cloud machines. Click Start Lab to access your environment with:
+
+Ubuntu 20.04 LTS
+Python 3.8+ with pip
+Git and essential development tools
+All dependencies pre-installed
+Task 1: Install and Configure OSINT Tools
+Step 1.1: Update System and Install Dependencies
+# Update system packages
+sudo apt update && sudo apt upgrade -y
+
+# Install required packages
+sudo apt install -y python3 python3-pip git curl wget build-essential \
+    python3-dev libxml2-dev libxslt1-dev zlib1g-dev libffi-dev libssl-dev
+
+# Verify installations
+python3 --version
+pip3 --version
+Step 1.2: Install SpiderFoot
+# Create working directory
+mkdir ~/osint-lab && cd ~/osint-lab
+
+# Clone SpiderFoot repository
+git clone https://github.com/smicallef/spiderfoot.git
+cd spiderfoot
+
+# Install dependencies
+pip3 install -r requirements.txt
+
+# Test installation
+python3 sf.py --help
+Step 1.3: Install recon-ng
+# Navigate to working directory
+cd ~/osint-lab
+
+# Clone recon-ng repository
+git clone https://github.com/lanmaster53/recon-ng.git
+cd recon-ng
+
+# Install dependencies
+pip3 install -r REQUIREMENTS
+
+# Test installation
+python3 recon-ng --help
+Step 1.4: Start SpiderFoot Web Interface
+# Start SpiderFoot server
+cd ~/osint-lab/spiderfoot
+python3 sf.py -l 127.0.0.1:5001 &
+
+# Verify it's running
+sleep 5
+curl -s http://127.0.0.1:5001 > /dev/null && echo "SpiderFoot running" || echo "Failed to start"
+Task 2: Create OSINT Automation Scripts
+Step 2.1: Create SpiderFoot Automation Script
+Create a Python script to automate SpiderFoot scans:
+
+#!/usr/bin/env python3
+# File: ~/osint-lab/spiderfoot_scanner.py
+
+import requests
+import json
+import sys
+
+class SpiderFootScanner:
+    def __init__(self, base_url="http://127.0.0.1:5001"):
+        self.base_url = base_url
+        self.session = requests.Session()
+    
+    def start_scan(self, target, scan_name="OSINT_Scan"):
+        """
+        Start a new SpiderFoot scan for the target domain.
+        
+        Args:
+            target: Target domain to scan
+            scan_name: Name for this scan
+        
+        Returns:
+            Boolean indicating success
+        """
+        # TODO: Define module list for reconnaissance
+        # Modules should include: DNS, subdomains, SSL, web frameworks
+        modules = []  # TODO: Add appropriate modules
+        
+        scan_data = {
+            "scanname": scan_name,
+            "scantarget": target,
+            "modulelist": ",".join(modules),
+            "typelist": "DOMAIN_NAME"
+        }
+        
+        # TODO: Send POST request to start scan
+        # TODO: Handle response and return success status
+        pass
+    
+    def get_scan_results(self, scan_id):
+        """
+        Retrieve results from a completed scan.
+        
+        Args:
+            scan_id: ID of the scan to retrieve
+        
+        Returns:
+            Dictionary containing scan results
+        """
+        # TODO: Implement result retrieval
+        # TODO: Parse and return results
+        pass
+
+def main():
+    if len(sys.argv) != 2:
+        print("Usage: python3 spiderfoot_scanner.py <target_domain>")
+        sys.exit(1)
+    
+    target = sys.argv[1]
+    scanner = SpiderFootScanner()
+    
+    # TODO: Start scan and display results
+    print(f"Starting scan for: {target}")
+
+if __name__ == "__main__":
+    main()
+Make the script executable:
+
+chmod +x ~/osint-lab/spiderfoot_scanner.py
+Step 2.2: Create recon-ng Automation Script
+Create a script to automate recon-ng reconnaissance:
+
+#!/usr/bin/env python3
+# File: ~/osint-lab/reconng_scanner.py
+
+import subprocess
+import sys
+import os
+
+class ReconNGScanner:
+    def __init__(self, workspace="product_recon"):
+        self.workspace = workspace
+        self.recon_path = os.path.expanduser("~/osint-lab/recon-ng")
+    
+    def create_workspace(self):
+        """
+        Create and select a workspace for reconnaissance.
+        """
+        # TODO: Create workspace using recon-ng commands
+        # TODO: Select the workspace
+        pass
+    
+    def install_modules(self):
+        """
+        Install required reconnaissance modules.
+        """
+        # TODO: Define list of modules to install
+        # Suggested: hackertarget, threatcrowd, resolve
+        modules = []  # TODO: Add module names
+        
+        # TODO: Install each module using marketplace
+        pass
+    
+    def add_domain(self, domain):
+        """
+        Add target domain to the workspace database.
+        
+        Args:
+            domain: Target domain to add
+        """
+        # TODO: Insert domain into database
+        pass
+    
+    def run_modules(self):
+        """
+        Execute reconnaissance modules on the target.
+        """
+        # TODO: Load and run each module
+        # TODO: Capture results
+        pass
+    
+    def export_results(self, output_file):
+        """
+        Export reconnaissance results to file.
+        
+        Args:
+            output_file: Path to save results
+        """
+        # TODO: Export hosts and domains to CSV
+        pass
+
+def main():
+    if len(sys.argv) != 2:
+        print("Usage: python3 reconng_scanner.py <target_domain>")
+        sys.exit(1)
+    
+    target = sys.argv[1]
+    scanner = ReconNGScanner()
+    
+    # TODO: Execute complete reconnaissance workflow
+    print(f"Starting recon-ng scan for: {target}")
+
+if __name__ == "__main__":
+    main()
+Make the script executable:
+
+chmod +x ~/osint-lab/reconng_scanner.py
+Step 2.3: Create Master OSINT Automation Script
+Create a comprehensive script that coordinates both tools:
+
+#!/usr/bin/env python3
+# File: ~/osint-lab/osint_master.py
+
+import os
+import sys
+import json
+import subprocess
+from datetime import datetime
+
+class OSINTMaster:
+    def __init__(self, target_domain, output_dir="results"):
+        self.target = target_domain
+        self.output_dir = output_dir
+        self.timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        self.results = {
+            'target': target_domain,
+            'timestamp': self.timestamp,
+            'findings': {}
+        }
+        os.makedirs(output_dir, exist_ok=True)
+    
+    def run_dns_enumeration(self):
+        """
+        Perform basic DNS enumeration using dig.
+        
+        Returns:
+            Dictionary with DNS records
+        """
+        # TODO: Use subprocess to run dig commands
+        # TODO: Query A records, MX records, NS records
+        # TODO: Store results in self.results['findings']['dns']
+        pass
+    
+    def discover_subdomains(self):
+        """
+        Discover subdomains using common prefixes.
+        
+        Returns:
+            List of discovered subdomains
+        """
+        common_prefixes = ['www', 'mail', 'ftp', 'api', 'admin', 
+                          'test', 'dev', 'staging', 'blog']
+        
+        # TODO: Test each subdomain prefix
+        # TODO: Return list of active subdomains
+        pass
+    
+    def run_spiderfoot(self):
+        """
+        Execute SpiderFoot scan.
+        """
+        # TODO: Call spiderfoot_scanner.py
+        # TODO: Capture and store results
+        pass
+    
+    def run_reconng(self):
+        """
+        Execute recon-ng scan.
+        """
+        # TODO: Call reconng_scanner.py
+        # TODO: Capture and store results
+        pass
+    
+    def analyze_results(self):
+        """
+        Analyze collected data and identify risks.
+        
+        Returns:
+            Dictionary with risk assessment
+        """
+        analysis = {
+            'risk_score': 0,
+            'risk_level': 'LOW',
+            'findings': [],
+            'recommendations': []
+        }
+        
+        # TODO: Check for risky subdomains (admin, test, dev)
+        # TODO: Calculate risk score based on findings
+        # TODO: Generate recommendations
+        
+        return analysis
+    
+    def generate_report(self):
+        """
+        Generate comprehensive OSINT report.
+        """
+        report_file = os.path.join(
+            self.output_dir, 
+            f"osint_report_{self.target}_{self.timestamp}.json"
+        )
+        
+        # TODO: Add analysis results to self.results
+        # TODO: Write JSON report
+        # TODO: Generate text summary report
+        pass
+    
+    def run_full_scan(self):
+        """
+        Execute complete OSINT reconnaissance workflow.
+        """
+        print(f"[+] Starting OSINT reconnaissance for {self.target}")
+        
+        # TODO: Run all reconnaissance methods
+        # TODO: Analyze results
+        # TODO: Generate reports
+        
+        print(f"[+] Reconnaissance complete. Results in {self.output_dir}")
+
+def main():
+    if len(sys.argv) != 2:
+        print("Usage: python3 osint_master.py <target_domain>")
+        sys.exit(1)
+    
+    target = sys.argv[1]
+    osint = OSINTMaster(target)
+    osint.run_full_scan()
+
+if __name__ == "__main__":
+    main()
+Make the script executable:
+
+chmod +x ~/osint-lab/osint_master.py
+Task 3: Execute OSINT Reconnaissance
+Step 3.1: Perform Manual DNS Reconnaissance
+Practice basic reconnaissance using command-line tools:
+
+# Query DNS A records
+dig example.com A +short
+
+# Query MX records
+dig example.com MX +short
+
+# Query NS records
+dig example.com NS +short
+
+# Perform reverse DNS lookup
+dig -x 93.184.216.34 +short
+
+# Test common subdomains
+for sub in www mail ftp api admin; do
+    echo -n "Testing $sub.example.com: "
+    dig +short $sub.example.com
+done
+Step 3.2: Run Automated OSINT Scans
+Execute your automation scripts:
+
+cd ~/osint-lab
+
+# Run SpiderFoot scan
+python3 spiderfoot_scanner.py example.com
+
+# Run recon-ng scan
+python3 reconng_scanner.py example.com
+
+# Run complete OSINT workflow
+python3 osint_master.py example.com
+Step 3.3: Analyze Results
+Review the generated reports:
+
+# View JSON report
+cat results/osint_report_*.json | python3 -m json.tool
+
+# View text summary
+cat results/osint_report_*.txt
+
+# List all discovered assets
+grep -r "subdomain" results/
+Task 4: Create Analysis and Reporting Tools
+Step 4.1: Create Result Analyzer Script
+#!/usr/bin/env python3
+# File: ~/osint-lab/analyze_results.py
+
+import json
+import sys
+from collections import Counter
+
+class ResultAnalyzer:
+    def __init__(self, report_file):
+        self.report_file = report_file
+        self.data = {}
+    
+    def load_report(self):
+        """
+        Load OSINT report from JSON file.
+        """
+        # TODO: Read and parse JSON report
+        # TODO: Store in self.data
+        pass
+    
+    def analyze_subdomains(self):
+        """
+        Analyze subdomain patterns and identify risks.
+        
+        Returns:
+            Dictionary with subdomain analysis
+        """
+        # TODO: Extract subdomains from results
+        # TODO: Identify risky patterns (admin, test, dev)
+        # TODO: Count subdomain types
+        pass
+    
+    def calculate_risk_score(self):
+        """
+        Calculate overall risk score (0-100).
+        
+        Returns:
+            Tuple of (risk_score, risk_level, risk_factors)
+        """
+        risk_score = 0
+        risk_factors = []
+        
+        # TODO: Check for exposed admin interfaces
+        # TODO: Check for development/staging environments
+        # TODO: Check for excessive subdomain exposure
+        # TODO: Calculate normalized risk score
+        
+        return risk_score, "MEDIUM", risk_factors
+    
+    def generate_summary(self):
+        """
+        Generate executive summary of findings.
+        """
+        # TODO: Create summary with key metrics
+        # TODO: Include risk assessment
+        # TODO: List top recommendations
+        pass
+
+def main():
+    if len(sys.argv) != 2:
+        print("Usage: python3 analyze_results.py <report_file.json>")
+        sys.exit(1)
+    
+    analyzer = ResultAnalyzer(sys.argv[1])
+    # TODO: Run analysis and display results
+
+if __name__ == "__main__":
+    main()
+Step 4.2: Test Analysis Tools
+# Make analyzer executable
+chmod +x ~/osint-lab/analyze_results.py
+
+# Run analysis on generated report
+python3 analyze_results.py results/osint_report_*.json
+Expected Outcomes
+After completing this lab, you should have:
+
+Functional SpiderFoot and recon-ng installations
+Python automation scripts for OSINT reconnaissance
+Collected intelligence data about target domains
+Generated comprehensive security reports
+Understanding of OSINT techniques and tools
+Ability to identify security risks from public information
+Troubleshooting Tips
+SpiderFoot won't start:
+
+Check if port 5001 is already in use: netstat -tuln | grep 5001
+Kill existing process: pkill -f sf.py
+Verify Python dependencies: pip3 install -r requirements.txt
+recon-ng module installation fails:
+
+Update recon-ng: cd recon-ng && git pull
+Check internet connectivity
+Try installing modules individually
+DNS queries return no results:
+
+Verify DNS server is reachable: ping 8.8.8.8
+Use alternative DNS: dig @8.8.8.8 example.com
+Check if domain exists and is properly configured
+Script permission errors:
+
+Ensure scripts are executable: chmod +x script_name.py
+Check file ownership: ls -l script_name.py
+Run with explicit Python: python3 script_name.py
+Conclusion
+This lab introduced OSINT-based product reconnaissance using SpiderFoot and recon-ng. You learned to automate intelligence gathering, analyze results, and generate security reports. These skills are essential for security assessments, threat intelligence, and understanding your organization's external attack surface.
+
+Key takeaways:
+
+OSINT tools automate public information gathering
+Multiple data sources provide comprehensive intelligence
+Automation scripts improve efficiency and consistency
+Risk analysis helps prioritize security efforts
+Regular reconnaissance identifies emerging threats
+Continue practicing with different targets and expand your scripts to include additional data sources and analysis techniques.
