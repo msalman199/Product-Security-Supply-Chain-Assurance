@@ -1,0 +1,477 @@
+Trace Product Network Activity Using ProcDOT & Wireshark
+Objectives
+By the end of this lab, students will be able to:
+
+Capture and analyze network traffic using Wireshark and tshark
+Visualize network communication patterns and flows
+Develop Python scripts to automate traffic capture and analysis
+Identify suspicious network activities in product communications
+Correlate process activities with network traffic for security analysis
+Prerequisites
+Basic understanding of TCP/IP networking and protocols
+Familiarity with Linux command line operations
+Basic Python programming knowledge
+Understanding of network security fundamentals
+Lab Environment
+This lab uses pre-configured Linux-based cloud machines provided by Al Nafi. Click Start Lab to access your dedicated environment with all required tools pre-installed including Wireshark, tshark, Python 3, and necessary libraries.
+
+Task 1: Environment Setup and Traffic Capture
+Step 1: Verify Installation and Configure Wireshark
+Check that required tools are installed:
+
+# Verify installations
+wireshark --version
+tshark --version
+python3 --version
+
+# Add user to wireshark group for packet capture
+sudo usermod -a -G wireshark $USER
+newgrp wireshark
+
+# Create working directory
+mkdir -p ~/lab7_network_analysis
+cd ~/lab7_network_analysis
+Step 2: Identify Network Interfaces
+List available network interfaces for packet capture:
+
+# List all network interfaces
+ip link show
+
+# List interfaces available for capture
+tshark -D
+
+# Note the interface name (e.g., eth0, ens33, any)
+Step 3: Create Traffic Generation Script
+Create a Python script to generate sample network traffic. Students must complete the implementation:
+
+#!/usr/bin/env python3
+# File: traffic_generator.py
+
+import socket
+import time
+import threading
+import requests
+from datetime import datetime
+
+class TrafficGenerator:
+    def __init__(self):
+        self.running = False
+        self.urls = [
+            'http://httpbin.org/get',
+            'http://httpbin.org/post',
+            'http://httpbin.org/headers'
+        ]
+    
+    def generate_http_traffic(self):
+        """Generate HTTP traffic simulating product API calls"""
+        while self.running:
+            try:
+                # TODO: Implement HTTP request loop
+                # TODO: Add custom headers (User-Agent, X-Product-ID)
+                # TODO: Handle both GET and POST requests
+                # TODO: Add appropriate delays between requests
+                pass
+            except Exception as e:
+                print(f"HTTP error: {e}")
+            time.sleep(5)
+    
+    def generate_dns_traffic(self):
+        """Generate DNS queries for product domains"""
+        domains = [
+            'product-security.example.com',
+            'api.security-scanner.com'
+        ]
+        while self.running:
+            # TODO: Implement DNS query loop using socket.gethostbyname()
+            # TODO: Handle exceptions for failed lookups
+            # TODO: Add delays between queries
+            pass
+    
+    def start(self):
+        """Start traffic generation in separate threads"""
+        self.running = True
+        
+        # TODO: Create and start threads for HTTP and DNS traffic
+        # TODO: Set threads as daemon threads
+        # TODO: Implement keyboard interrupt handling
+        pass
+
+if __name__ == "__main__":
+    generator = TrafficGenerator()
+    generator.start()
+Step 4: Capture Network Traffic
+Start packet capture using tshark:
+
+# Start capture (exclude SSH to reduce noise)
+tshark -i any -w product_traffic.pcap -f "not port 22" &
+
+# Note the process ID
+CAPTURE_PID=$!
+
+# In another terminal, start traffic generation
+python3 traffic_generator.py
+
+# Let it run for 5 minutes, then stop
+kill $CAPTURE_PID
+Step 5: Analyze Basic Statistics
+# View IP conversations
+tshark -r product_traffic.pcap -q -z conv,ip
+
+# View protocol hierarchy
+tshark -r product_traffic.pcap -q -z io,phs
+
+# View endpoints
+tshark -r product_traffic.pcap -q -z endpoints,ip
+Task 2: Convert and Process Captured Data
+Step 1: Create PCAP to CSV Converter
+Students must implement the conversion logic:
+
+#!/usr/bin/env python3
+# File: pcap_converter.py
+
+import pyshark
+import csv
+import sys
+
+def convert_pcap_to_csv(pcap_file, output_file):
+    """
+    Convert PCAP file to CSV format for analysis
+    
+    Args:
+        pcap_file: Input PCAP file path
+        output_file: Output CSV file path
+    """
+    try:
+        cap = pyshark.FileCapture(pcap_file)
+        
+        with open(output_file, 'w', newline='') as csvfile:
+            fieldnames = [
+                'Time', 'Source_IP', 'Dest_IP', 'Source_Port', 
+                'Dest_Port', 'Protocol', 'Length'
+            ]
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            writer.writeheader()
+            
+            # TODO: Iterate through packets
+            # TODO: Extract IP layer information
+            # TODO: Extract TCP/UDP port information
+            # TODO: Write to CSV file
+            # TODO: Handle exceptions for malformed packets
+            pass
+            
+    except Exception as e:
+        print(f"Error: {e}")
+        return False
+    
+    return True
+
+if __name__ == "__main__":
+    if len(sys.argv) != 3:
+        print("Usage: python3 pcap_converter.py <input.pcap> <output.csv>")
+        sys.exit(1)
+    
+    convert_pcap_to_csv(sys.argv[1], sys.argv[2])
+Run the converter:
+
+python3 pcap_converter.py product_traffic.pcap network_data.csv
+Step 2: Create Process Monitor Log Simulator
+Generate simulated process monitor data:
+
+#!/usr/bin/env python3
+# File: create_procmon_log.py
+
+import csv
+import datetime
+import random
+
+def create_procmon_log(output_file='procmon_log.csv'):
+    """
+    Create simulated process monitor log
+    
+    Args:
+        output_file: Output CSV file path
+    """
+    processes = ['python3', 'curl', 'firefox', 'product_scanner']
+    operations = ['TCP Connect', 'TCP Disconnect', 'DNS Query']
+    
+    with open(output_file, 'w', newline='') as csvfile:
+        fieldnames = ['Time', 'Process', 'PID', 'Operation', 'Target', 'Result']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
+        
+        # TODO: Generate 500-1000 log entries
+        # TODO: Use realistic timestamps
+        # TODO: Correlate network operations with processes
+        # TODO: Include both successful and failed operations
+        pass
+    
+    print(f"Process monitor log created: {output_file}")
+
+if __name__ == "__main__":
+    create_procmon_log()
+Task 3: Network Traffic Visualization
+Step 1: Create Network Flow Visualizer
+Students implement visualization logic:
+
+#!/usr/bin/env python3
+# File: network_visualizer.py
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import networkx as nx
+from collections import defaultdict
+
+class NetworkVisualizer:
+    def __init__(self, csv_file):
+        self.df = pd.read_csv(csv_file)
+        self.G = nx.DiGraph()
+    
+    def create_network_graph(self):
+        """Build network graph from traffic data"""
+        # TODO: Iterate through DataFrame rows
+        # TODO: Add nodes for source and destination IPs
+        # TODO: Add edges with weight based on packet count
+        # TODO: Store protocol information in edge attributes
+        pass
+    
+    def visualize_flows(self, output_file='network_flows.png'):
+        """
+        Create network flow visualization
+        
+        Args:
+            output_file: Output image file path
+        """
+        plt.figure(figsize=(15, 10))
+        
+        # TODO: Create spring layout for graph
+        # TODO: Color nodes based on internal/external IPs
+        # TODO: Size edges based on traffic volume
+        # TODO: Add labels and legend
+        # TODO: Save figure
+        pass
+    
+    def generate_statistics(self):
+        """Generate and print traffic statistics"""
+        print("\n=== Network Traffic Statistics ===")
+        
+        # TODO: Calculate total packets
+        # TODO: Show protocol distribution
+        # TODO: List top 10 source IPs
+        # TODO: List top 10 destination IPs
+        # TODO: Show top destination ports
+        pass
+    
+    def detect_anomalies(self):
+        """Detect suspicious network patterns"""
+        print("\n=== Anomaly Detection ===")
+        
+        # TODO: Identify high-volume connections
+        # TODO: Detect unusual ports
+        # TODO: Find connections to suspicious IPs
+        # TODO: Calculate baseline and threshold
+        pass
+
+def main():
+    visualizer = NetworkVisualizer('network_data.csv')
+    visualizer.create_network_graph()
+    visualizer.visualize_flows()
+    visualizer.generate_statistics()
+    visualizer.detect_anomalies()
+
+if __name__ == "__main__":
+    main()
+Step 2: Generate Visualizations
+# Run the visualizer
+python3 network_visualizer.py
+
+# View the generated image
+xdg-open network_flows.png
+Task 4: Automated Analysis Pipeline
+Step 1: Create Master Automation Script
+Students build complete automation pipeline:
+
+#!/usr/bin/env python3
+# File: automated_analysis.py
+
+import subprocess
+import time
+import os
+from datetime import datetime
+
+class NetworkAnalysisPipeline:
+    def __init__(self, duration=300):
+        self.duration = duration
+        self.capture_process = None
+        self.traffic_process = None
+    
+    def start_capture(self, interface='any'):
+        """
+        Start packet capture
+        
+        Args:
+            interface: Network interface to capture on
+        
+        Returns:
+            PCAP filename
+        """
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        pcap_file = f'capture_{timestamp}.pcap'
+        
+        # TODO: Start tshark subprocess
+        # TODO: Store process handle
+        # TODO: Return filename
+        pass
+    
+    def start_traffic_generation(self):
+        """Start traffic generation subprocess"""
+        # TODO: Start traffic_generator.py as subprocess
+        # TODO: Store process handle
+        pass
+    
+    def wait_for_completion(self):
+        """Wait for capture to complete"""
+        # TODO: Wait for specified duration
+        # TODO: Monitor capture process
+        # TODO: Handle interrupts
+        pass
+    
+    def process_data(self, pcap_file):
+        """
+        Process captured data
+        
+        Args:
+            pcap_file: PCAP file to process
+        
+        Returns:
+            CSV filename
+        """
+        # TODO: Convert PCAP to CSV
+        # TODO: Generate visualizations
+        # TODO: Create process monitor log
+        # TODO: Return CSV filename
+        pass
+    
+    def generate_report(self, pcap_file, csv_file):
+        """
+        Generate analysis report
+        
+        Args:
+            pcap_file: PCAP file path
+            csv_file: CSV file path
+        
+        Returns:
+            Report filename
+        """
+        report_file = f"report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
+        
+        # TODO: Run tshark statistics commands
+        # TODO: Compile results into report
+        # TODO: Include file locations
+        # TODO: Add summary statistics
+        pass
+    
+    def cleanup(self):
+        """Terminate all subprocesses"""
+        # TODO: Terminate capture process
+        # TODO: Terminate traffic generation
+        # TODO: Handle cleanup errors
+        pass
+    
+    def run(self):
+        """Execute complete analysis pipeline"""
+        try:
+            print("Starting automated network analysis...")
+            
+            # TODO: Start traffic generation
+            # TODO: Start packet capture
+            # TODO: Wait for completion
+            # TODO: Process captured data
+            # TODO: Generate report
+            # TODO: Print summary
+            
+        except KeyboardInterrupt:
+            print("\nInterrupted by user")
+        except Exception as e:
+            print(f"Error: {e}")
+        finally:
+            self.cleanup()
+
+if __name__ == "__main__":
+    pipeline = NetworkAnalysisPipeline(duration=300)
+    pipeline.run()
+Step 2: Create Configuration File
+#!/usr/bin/env python3
+# File: config.py
+
+# Capture Configuration
+CAPTURE_INTERFACE = 'any'
+CAPTURE_DURATION = 300  # seconds
+CAPTURE_FILTER = 'not port 22'
+
+# Traffic Generation
+HTTP_ENDPOINTS = [
+    'http://httpbin.org/get',
+    'http://httpbin.org/post'
+]
+
+DNS_DOMAINS = [
+    'product-security.example.com',
+    'api.security-scanner.com'
+]
+
+# Analysis Settings
+ANOMALY_THRESHOLD = 3  # Standard deviations
+COMMON_PORTS = {80, 443, 53, 22}
+
+# Output Settings
+OUTPUT_DIR = './analysis_output'
+GENERATE_VISUALIZATIONS = True
+Step 3: Run Complete Analysis
+# Create output directory
+mkdir -p analysis_output
+
+# Run automated analysis
+python3 automated_analysis.py
+
+# Review generated files
+ls -lh analysis_output/
+Expected Outcomes
+After completing this lab, students should have:
+
+Captured network traffic PCAP files
+CSV files with parsed network data
+Network flow visualization images
+Process monitor correlation logs
+Comprehensive analysis reports
+Working automation scripts
+Key files generated:
+
+product_traffic.pcap - Raw packet capture
+network_data.csv - Parsed traffic data
+network_flows.png - Visual network map
+procmon_log.csv - Process activity log
+report_*.txt - Analysis summary
+Troubleshooting Tips
+Permission Denied for Packet Capture:
+
+Ensure user is in wireshark group: groups $USER
+Re-login or use newgrp wireshark
+Check interface permissions: ls -l /dev/net/tun
+PyShark Import Errors:
+
+Install pyshark: pip3 install pyshark
+Install tshark: sudo apt install tshark
+Verify tshark path: which tshark
+No Packets Captured:
+
+Verify interface is up: ip link show
+Check capture filter syntax
+Ensure traffic generation is running
+Try capturing on 'any' interface
+Visualization Not Displaying:
+
+Install matplotlib: pip3 install matplotlib networkx
+Check X11 forwarding if using SSH
+Save to file instead of displaying: plt.savefig()
+Conclusion
+This lab provided hands-on experience with network traffic analysis using industry-standard tools. Students learned to capture packets with Wireshark/tshark, process network data programmatically, visualize communication patterns, and automate the entire analysis pipeline. These skills are essential for security analysis, network troubleshooting, and understanding product network behavior. The automation scripts developed can be adapted for continuous monitoring and real-time threat detection in production environments.
