@@ -1,0 +1,734 @@
+Perform Linux Service Enumeration with nmap & netstat
+Objectives
+By the end of this lab, students will be able to:
+
+Understand the fundamentals of service enumeration on Linux systems
+Use nmap to scan for open services and ports on local systems
+Utilize netstat to identify active network connections and listening services
+Create Python scripts to automate service enumeration tasks
+Analyze and interpret service enumeration results for security assessment
+Implement best practices for network reconnaissance using open-source tools
+Prerequisites
+Before starting this lab, students should have:
+
+Basic knowledge of Linux command-line interface
+Understanding of networking concepts (ports, protocols, IP addresses)
+Familiarity with Python programming basics
+Knowledge of common network services (HTTP, SSH, FTP, etc.)
+Basic understanding of cybersecurity concepts
+Lab Environment
+Al Nafi Cloud Machine Setup: This lab runs entirely on Al Nafi's provided Linux-based cloud machines. Simply click Start Lab to access your pre-configured environment. No additional VM setup or configuration is required.
+
+System Requirements:
+
+Linux distribution (Ubuntu 20.04 or later recommended)
+Pre-installed tools: nmap, netstat, Python 3.x
+Network connectivity for package installation if needed
+Task 1: Use nmap to scan for open services on the target device
+Subtask 1.1: Install and verify nmap installation
+First, let's ensure nmap is properly installed on your system.
+
+# Check if nmap is installed
+which nmap
+
+# If not installed, install nmap
+sudo apt update
+sudo apt install nmap -y
+
+# Verify installation and check version
+nmap --version
+Subtask 1.2: Perform basic port scanning
+Start with a basic scan of your local machine to identify open ports.
+
+# Scan localhost for common ports
+nmap localhost
+
+# Scan specific port range
+nmap -p 1-1000 localhost
+
+# Scan all ports (1-65535) - this may take longer
+nmap -p- localhost
+Expected Output Example:
+
+Starting Nmap 7.80 ( https://nmap.org )
+Nmap scan report for localhost (127.0.0.1)
+Host is up (0.000012s latency).
+Not shown: 996 closed ports
+PORT     STATE SERVICE
+22/tcp   open  ssh
+80/tcp   open  http
+443/tcp  open  https
+3306/tcp open  mysql
+Subtask 1.3: Perform service version detection
+Use nmap's service detection capabilities to identify running services and their versions.
+
+# Service version detection
+nmap -sV localhost
+
+# Aggressive scan with OS detection and service versions
+nmap -A localhost
+
+# Scan with script scanning for additional information
+nmap -sC -sV localhost
+Subtask 1.4: Create comprehensive scanning scripts
+Create a shell script for systematic scanning:
+
+# Create scanning script
+nano nmap_scan.sh
+Add the following content to the script:
+
+#!/bin/bash
+
+# Comprehensive nmap scanning script
+TARGET="localhost"
+OUTPUT_DIR="scan_results"
+
+# Create output directory
+mkdir -p $OUTPUT_DIR
+
+echo "Starting comprehensive nmap scan of $TARGET"
+echo "Results will be saved in $OUTPUT_DIR directory"
+
+# Basic port scan
+echo "Performing basic port scan..."
+nmap $TARGET > $OUTPUT_DIR/basic_scan.txt
+
+# Service version detection
+echo "Performing service version detection..."
+nmap -sV $TARGET > $OUTPUT_DIR/service_scan.txt
+
+# Aggressive scan
+echo "Performing aggressive scan..."
+nmap -A $TARGET > $OUTPUT_DIR/aggressive_scan.txt
+
+# UDP scan for common ports
+echo "Performing UDP scan..."
+sudo nmap -sU --top-ports 100 $TARGET > $OUTPUT_DIR/udp_scan.txt
+
+# Script scan
+echo "Performing script scan..."
+nmap -sC $TARGET > $OUTPUT_DIR/script_scan.txt
+
+echo "Scan completed. Check $OUTPUT_DIR for results."
+Make the script executable and run it:
+
+chmod +x nmap_scan.sh
+./nmap_scan.sh
+Task 2: Use netstat to detect active connections
+Subtask 2.1: Install and verify netstat
+Ensure netstat is available on your system:
+
+# Check if netstat is installed
+which netstat
+
+# If not available, install net-tools package
+sudo apt install net-tools -y
+
+# Verify installation
+netstat --version
+Subtask 2.2: Display listening ports and services
+Use netstat to identify services listening on your system:
+
+# Show all listening ports
+netstat -l
+
+# Show listening ports with process information
+netstat -lp
+
+# Show TCP listening ports only
+netstat -lt
+
+# Show UDP listening ports only
+netstat -lu
+
+# Show listening ports with numerical addresses
+netstat -ln
+Subtask 2.3: Analyze active connections
+Examine active network connections:
+
+# Show all active connections
+netstat -a
+
+# Show active TCP connections
+netstat -at
+
+# Show active connections with process information
+netstat -ap
+
+# Show network statistics
+netstat -s
+
+# Show routing table
+netstat -r
+Subtask 2.4: Create a netstat monitoring script
+Create a script to monitor network connections:
+
+nano netstat_monitor.sh
+Add the following content:
+
+#!/bin/bash
+
+# Network monitoring script using netstat
+OUTPUT_DIR="netstat_results"
+TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+
+# Create output directory
+mkdir -p $OUTPUT_DIR
+
+echo "Starting network connection analysis..."
+echo "Timestamp: $(date)"
+
+# Listening ports analysis
+echo "Analyzing listening ports..."
+netstat -ln > $OUTPUT_DIR/listening_ports_$TIMESTAMP.txt
+
+# Active connections analysis
+echo "Analyzing active connections..."
+netstat -an > $OUTPUT_DIR/active_connections_$TIMESTAMP.txt
+
+# Process-specific analysis
+echo "Analyzing processes and ports..."
+netstat -lnp > $OUTPUT_DIR/process_ports_$TIMESTAMP.txt
+
+# Network statistics
+echo "Gathering network statistics..."
+netstat -s > $OUTPUT_DIR/network_stats_$TIMESTAMP.txt
+
+# Create summary report
+echo "Creating summary report..."
+{
+    echo "Network Analysis Summary - $(date)"
+    echo "========================================"
+    echo ""
+    echo "Listening TCP Ports:"
+    netstat -lnt | grep LISTEN | awk '{print $4}' | sort -u
+    echo ""
+    echo "Listening UDP Ports:"
+    netstat -lnu | awk 'NR>2 {print $4}' | sort -u
+    echo ""
+    echo "Active Connection Count:"
+    netstat -an | grep ESTABLISHED | wc -l
+    echo ""
+    echo "Top 10 Most Active Ports:"
+    netstat -an | grep ESTABLISHED | awk '{print $4}' | cut -d: -f2 | sort | uniq -c | sort -nr | head -10
+} > $OUTPUT_DIR/summary_$TIMESTAMP.txt
+
+echo "Analysis completed. Results saved in $OUTPUT_DIR/"
+Make executable and run:
+
+chmod +x netstat_monitor.sh
+./netstat_monitor.sh
+Task 3: Automate the enumeration process with Python and nmap scripts
+Subtask 3.1: Install Python dependencies
+Install required Python libraries:
+
+# Install python3-pip if not available
+sudo apt install python3-pip -y
+
+# Install python-nmap library
+pip3 install python-nmap
+
+# Verify installation
+python3 -c "import nmap; print('python-nmap installed successfully')"
+Subtask 3.2: Create Python automation script
+Create a comprehensive Python script for service enumeration:
+
+nano service_enumeration.py
+Add the following Python code:
+
+#!/usr/bin/env python3
+
+import nmap
+import subprocess
+import json
+import datetime
+import os
+import sys
+
+class ServiceEnumerator:
+    def __init__(self, target="localhost"):
+        self.target = target
+        self.nm = nmap.PortScanner()
+        self.results = {}
+        self.output_dir = "enumeration_results"
+        
+        # Create output directory
+        if not os.path.exists(self.output_dir):
+            os.makedirs(self.output_dir)
+    
+    def nmap_scan(self):
+        """Perform comprehensive nmap scanning"""
+        print(f"Starting nmap scan of {self.target}...")
+        
+        try:
+            # Basic TCP scan
+            print("Performing TCP scan...")
+            tcp_scan = self.nm.scan(self.target, '1-65535', '-sS')
+            
+            # Service version detection
+            print("Performing service detection...")
+            service_scan = self.nm.scan(self.target, arguments='-sV')
+            
+            # Script scanning
+            print("Performing script scan...")
+            script_scan = self.nm.scan(self.target, arguments='-sC')
+            
+            self.results['nmap'] = {
+                'tcp_scan': tcp_scan,
+                'service_scan': service_scan,
+                'script_scan': script_scan
+            }
+            
+            return True
+            
+        except Exception as e:
+            print(f"Error during nmap scan: {e}")
+            return False
+    
+    def netstat_analysis(self):
+        """Perform netstat analysis"""
+        print("Performing netstat analysis...")
+        
+        try:
+            # Get listening ports
+            listening_cmd = ["netstat", "-ln"]
+            listening_result = subprocess.run(listening_cmd, capture_output=True, text=True)
+            
+            # Get active connections
+            active_cmd = ["netstat", "-an"]
+            active_result = subprocess.run(active_cmd, capture_output=True, text=True)
+            
+            # Get process information
+            process_cmd = ["netstat", "-lnp"]
+            process_result = subprocess.run(process_cmd, capture_output=True, text=True)
+            
+            self.results['netstat'] = {
+                'listening_ports': listening_result.stdout,
+                'active_connections': active_result.stdout,
+                'process_info': process_result.stdout
+            }
+            
+            return True
+            
+        except Exception as e:
+            print(f"Error during netstat analysis: {e}")
+            return False
+    
+    def parse_results(self):
+        """Parse and analyze results"""
+        print("Parsing results...")
+        
+        parsed_results = {
+            'timestamp': datetime.datetime.now().isoformat(),
+            'target': self.target,
+            'open_ports': [],
+            'services': [],
+            'listening_ports': [],
+            'active_connections': 0
+        }
+        
+        # Parse nmap results
+        if 'nmap' in self.results:
+            for host in self.nm.all_hosts():
+                for proto in self.nm[host].all_protocols():
+                    ports = self.nm[host][proto].keys()
+                    for port in ports:
+                        state = self.nm[host][proto][port]['state']
+                        if state == 'open':
+                            service_info = {
+                                'port': port,
+                                'protocol': proto,
+                                'state': state,
+                                'service': self.nm[host][proto][port].get('name', 'unknown'),
+                                'version': self.nm[host][proto][port].get('version', 'unknown')
+                            }
+                            parsed_results['open_ports'].append(service_info)
+                            parsed_results['services'].append(service_info)
+        
+        # Parse netstat results
+        if 'netstat' in self.results:
+            listening_lines = self.results['netstat']['listening_ports'].split('\n')
+            for line in listening_lines:
+                if 'LISTEN' in line:
+                    parts = line.split()
+                    if len(parts) >= 4:
+                        parsed_results['listening_ports'].append(parts[3])
+            
+            # Count active connections
+            active_lines = self.results['netstat']['active_connections'].split('\n')
+            active_count = sum(1 for line in active_lines if 'ESTABLISHED' in line)
+            parsed_results['active_connections'] = active_count
+        
+        return parsed_results
+    
+    def generate_report(self, parsed_results):
+        """Generate comprehensive report"""
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        
+        # JSON report
+        json_file = f"{self.output_dir}/enumeration_report_{timestamp}.json"
+        with open(json_file, 'w') as f:
+            json.dump(parsed_results, f, indent=2)
+        
+        # Text report
+        txt_file = f"{self.output_dir}/enumeration_report_{timestamp}.txt"
+        with open(txt_file, 'w') as f:
+            f.write("SERVICE ENUMERATION REPORT\n")
+            f.write("=" * 50 + "\n")
+            f.write(f"Target: {parsed_results['target']}\n")
+            f.write(f"Timestamp: {parsed_results['timestamp']}\n\n")
+            
+            f.write("OPEN PORTS (nmap):\n")
+            f.write("-" * 20 + "\n")
+            for port_info in parsed_results['open_ports']:
+                f.write(f"Port {port_info['port']}/{port_info['protocol']}: "
+                       f"{port_info['service']} ({port_info['version']})\n")
+            
+            f.write(f"\nLISTENING PORTS (netstat): {len(parsed_results['listening_ports'])}\n")
+            f.write("-" * 30 + "\n")
+            for port in parsed_results['listening_ports']:
+                f.write(f"{port}\n")
+            
+            f.write(f"\nACTIVE CONNECTIONS: {parsed_results['active_connections']}\n")
+        
+        print(f"Reports generated:")
+        print(f"  JSON: {json_file}")
+        print(f"  Text: {txt_file}")
+    
+    def run_enumeration(self):
+        """Run complete enumeration process"""
+        print("Starting automated service enumeration...")
+        print("=" * 50)
+        
+        # Perform nmap scanning
+        if not self.nmap_scan():
+            print("nmap scanning failed")
+            return False
+        
+        # Perform netstat analysis
+        if not self.netstat_analysis():
+            print("netstat analysis failed")
+            return False
+        
+        # Parse results
+        parsed_results = self.parse_results()
+        
+        # Generate reports
+        self.generate_report(parsed_results)
+        
+        print("\nEnumeration completed successfully!")
+        print(f"Found {len(parsed_results['open_ports'])} open ports")
+        print(f"Found {len(parsed_results['listening_ports'])} listening ports")
+        print(f"Found {parsed_results['active_connections']} active connections")
+        
+        return True
+
+def main():
+    # Create enumerator instance
+    enumerator = ServiceEnumerator()
+    
+    # Run enumeration
+    success = enumerator.run_enumeration()
+    
+    if success:
+        print("\nService enumeration completed successfully!")
+    else:
+        print("\nService enumeration failed!")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()
+Subtask 3.3: Create advanced nmap scripts
+Create custom nmap scripts for specific enumeration tasks:
+
+nano advanced_nmap_scripts.py
+Add the following code:
+
+#!/usr/bin/env python3
+
+import nmap
+import json
+import datetime
+
+class AdvancedNmapScanner:
+    def __init__(self, target="localhost"):
+        self.target = target
+        self.nm = nmap.PortScanner()
+    
+    def vulnerability_scan(self):
+        """Perform vulnerability scanning"""
+        print("Performing vulnerability scan...")
+        try:
+            result = self.nm.scan(self.target, arguments='--script vuln')
+            return result
+        except Exception as e:
+            print(f"Vulnerability scan error: {e}")
+            return None
+    
+    def service_enumeration_scan(self):
+        """Detailed service enumeration"""
+        print("Performing detailed service enumeration...")
+        try:
+            result = self.nm.scan(self.target, arguments='-sV --script=banner,http-title,ssh-hostkey')
+            return result
+        except Exception as e:
+            print(f"Service enumeration error: {e}")
+            return None
+    
+    def stealth_scan(self):
+        """Perform stealth scanning"""
+        print("Performing stealth scan...")
+        try:
+            result = self.nm.scan(self.target, arguments='-sS -T2')
+            return result
+        except Exception as e:
+            print(f"Stealth scan error: {e}")
+            return None
+    
+    def comprehensive_scan(self):
+        """Run all scanning methods"""
+        results = {}
+        
+        # Basic scan
+        print("Running basic scan...")
+        results['basic'] = self.nm.scan(self.target, '1-1000')
+        
+        # Service scan
+        results['service'] = self.service_enumeration_scan()
+        
+        # Vulnerability scan
+        results['vulnerability'] = self.vulnerability_scan()
+        
+        # Stealth scan
+        results['stealth'] = self.stealth_scan()
+        
+        return results
+
+# Example usage
+if __name__ == "__main__":
+    scanner = AdvancedNmapScanner()
+    results = scanner.comprehensive_scan()
+    
+    # Save results
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    with open(f"advanced_scan_{timestamp}.json", 'w') as f:
+        json.dump(results, f, indent=2)
+    
+    print("Advanced scanning completed!")
+Subtask 3.4: Run the automation scripts
+Execute the Python automation scripts:
+
+# Make scripts executable
+chmod +x service_enumeration.py
+chmod +x advanced_nmap_scripts.py
+
+# Run the main enumeration script
+python3 service_enumeration.py
+
+# Run the advanced nmap scripts
+python3 advanced_nmap_scripts.py
+Subtask 3.5: Create a master automation script
+Create a comprehensive script that combines all tools:
+
+nano master_enumeration.sh
+Add the following content:
+
+#!/bin/bash
+
+# Master Service Enumeration Script
+# Combines nmap, netstat, and Python automation
+
+TARGET="localhost"
+OUTPUT_DIR="master_enumeration_$(date +%Y%m%d_%H%M%S)"
+
+echo "Starting Master Service Enumeration"
+echo "Target: $TARGET"
+echo "Output Directory: $OUTPUT_DIR"
+echo "=================================="
+
+# Create output directory
+mkdir -p $OUTPUT_DIR
+
+# Phase 1: Basic nmap scanning
+echo "Phase 1: Basic nmap scanning..."
+nmap $TARGET > $OUTPUT_DIR/nmap_basic.txt
+nmap -sV $TARGET > $OUTPUT_DIR/nmap_services.txt
+nmap -A $TARGET > $OUTPUT_DIR/nmap_aggressive.txt
+
+# Phase 2: netstat analysis
+echo "Phase 2: netstat analysis..."
+netstat -ln > $OUTPUT_DIR/netstat_listening.txt
+netstat -an > $OUTPUT_DIR/netstat_all.txt
+netstat -lnp > $OUTPUT_DIR/netstat_processes.txt
+
+# Phase 3: Python automation
+echo "Phase 3: Python automation..."
+cd $OUTPUT_DIR
+python3 ../service_enumeration.py
+python3 ../advanced_nmap_scripts.py
+cd ..
+
+# Phase 4: Generate summary
+echo "Phase 4: Generating summary..."
+{
+    echo "Master Enumeration Summary"
+    echo "========================="
+    echo "Date: $(date)"
+    echo "Target: $TARGET"
+    echo ""
+    echo "Open Ports (nmap):"
+    grep "open" $OUTPUT_DIR/nmap_basic.txt
+    echo ""
+    echo "Listening Ports (netstat):"
+    grep "LISTEN" $OUTPUT_DIR/netstat_listening.txt | awk '{print $4}' | sort -u
+    echo ""
+    echo "Active Connections:"
+    grep "ESTABLISHED" $OUTPUT_DIR/netstat_all.txt | wc -l
+} > $OUTPUT_DIR/master_summary.txt
+
+echo "Master enumeration completed!"
+echo "Results saved in: $OUTPUT_DIR"
+echo "Check master_summary.txt for overview"
+Make executable and run:
+
+chmod +x master_enumeration.sh
+./master_enumeration.sh
+Verification and Analysis
+Analyzing Results
+Review the generated reports and verify the enumeration results:
+
+# View summary results
+cat master_enumeration_*/master_summary.txt
+
+# Check JSON reports for detailed analysis
+ls -la */enumeration_report_*.json
+
+# Compare nmap and netstat results
+diff <(grep "open" */nmap_basic.txt | awk '{print $1}') <(grep "LISTEN" */netstat_listening.txt | awk '{print $4}' | cut -d: -f2 | sort -u)
+Common Services Analysis
+Create a script to identify common services:
+
+nano analyze_services.py
+#!/usr/bin/env python3
+
+import json
+import glob
+
+def analyze_common_services():
+    """Analyze and categorize discovered services"""
+    
+    common_services = {
+        22: "SSH",
+        23: "Telnet", 
+        25: "SMTP",
+        53: "DNS",
+        80: "HTTP",
+        110: "POP3",
+        143: "IMAP",
+        443: "HTTPS",
+        993: "IMAPS",
+        995: "POP3S",
+        3306: "MySQL",
+        5432: "PostgreSQL",
+        6379: "Redis",
+        27017: "MongoDB"
+    }
+    
+    # Find JSON report files
+    json_files = glob.glob("*/enumeration_report_*.json")
+    
+    for json_file in json_files:
+        print(f"Analyzing: {json_file}")
+        
+        with open(json_file, 'r') as f:
+            data = json.load(f)
+        
+        print("Identified Services:")
+        print("-" * 20)
+        
+        for port_info in data.get('open_ports', []):
+            port = int(port_info['port'])
+            service_name = common_services.get(port, "Unknown")
+            
+            print(f"Port {port}: {service_name} ({port_info['service']})")
+            
+            # Security recommendations
+            if port == 23:
+                print("  WARNING: Telnet is insecure, consider using SSH")
+            elif port == 21:
+                print("  WARNING: FTP may be insecure, consider SFTP")
+            elif port == 80:
+                print("  INFO: HTTP detected, ensure HTTPS is also available")
+        
+        print()
+
+if __name__ == "__main__":
+    analyze_common_services()
+Run the analysis:
+
+python3 analyze_services.py
+Troubleshooting
+Common Issues and Solutions
+Issue 1: Permission denied errors
+
+# Solution: Run with sudo for privileged operations
+sudo nmap -sS localhost
+sudo netstat -lnp
+Issue 2: Python nmap module not found
+
+# Solution: Install using pip3
+pip3 install python-nmap
+# Or system package manager
+sudo apt install python3-nmap
+Issue 3: netstat command not found
+
+# Solution: Install net-tools
+sudo apt update
+sudo apt install net-tools
+Issue 4: Slow scanning
+
+# Solution: Use faster timing templates
+nmap -T4 localhost  # Aggressive timing
+nmap -T5 localhost  # Insane timing (very fast)
+Security Considerations
+Best Practices
+Legal Compliance: Only scan systems you own or have explicit permission to test
+Rate Limiting: Use appropriate timing templates to avoid overwhelming target systems
+Logging: Keep detailed logs of all enumeration activities
+Data Protection: Secure enumeration results and reports
+Regular Updates: Keep tools updated to latest versions
+Ethical Guidelines
+Always obtain proper authorization before scanning
+Respect system resources and availability
+Report vulnerabilities through proper channels
+Follow responsible disclosure practices
+Conclusion
+In this lab, you have successfully learned to perform comprehensive Linux service enumeration using both nmap and netstat tools. You have accomplished the following key objectives:
+
+Technical Skills Developed:
+
+Mastered nmap scanning techniques for port and service discovery
+Utilized netstat for analyzing active connections and listening services
+Created Python automation scripts for systematic enumeration
+Implemented comprehensive reporting and analysis workflows
+Practical Applications:
+
+Security Assessment: The techniques learned are fundamental for security auditing and penetration testing
+Network Monitoring: Regular service enumeration helps maintain network security posture
+Incident Response: These skills are crucial for investigating potential security incidents
+System Administration: Understanding active services is essential for proper system management
+Industry Relevance: This lab directly supports the Al Razzaq Product Security & Supply Chain Assurance certification by providing hands-on experience with essential security tools and methodologies. The skills developed here are widely applicable in cybersecurity roles including:
+
+Security Analyst positions
+Penetration Testing roles
+Network Security Engineering
+Incident Response Team member
+Security Consultant positions
+Key Takeaways:
+
+Service enumeration is a critical first step in security assessment
+Combining multiple tools provides comprehensive visibility
+Automation improves efficiency and consistency
+Proper documentation and reporting are essential
+Understanding both offensive and defensive perspectives enhances security posture
+The automation scripts and methodologies you've created can be adapted and extended for various real-world scenarios, making this knowledge immediately applicable in professional cybersecurity environments.
