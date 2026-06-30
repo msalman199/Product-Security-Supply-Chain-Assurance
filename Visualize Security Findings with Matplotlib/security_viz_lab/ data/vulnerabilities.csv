@@ -1,0 +1,9 @@
+host,vulnerability_type,cvss_score,severity,status
+10.0.0.5,SQL_Injection,8.5,high,open
+10.0.0.10,XSS,6.2,medium,patched
+10.0.0.15,Buffer_Overflow,9.1,critical,open
+10.0.0.20,Privilege_Escalation,7.8,high,mitigated
+10.0.0.25,Info_Disclosure,4.3,low,open
+10.0.0.30,Remote_Code_Exec,9.8,critical,open
+10.0.0.35,DoS,5.5,medium,patched
+10.0.0.40,Auth_Bypass,8.2,high,open
