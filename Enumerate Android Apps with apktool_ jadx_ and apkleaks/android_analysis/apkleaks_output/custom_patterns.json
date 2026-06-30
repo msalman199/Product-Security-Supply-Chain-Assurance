@@ -1,0 +1,24 @@
+{
+  "patterns": [
+    {
+      "name": "AWS Access Key",
+      "regex": "AKIA[0-9A-Z]{16}"
+    },
+    {
+      "name": "Google API Key",
+      "regex": "AIza[0-9A-Za-z\\-_]{35}"
+    },
+    {
+      "name": "Firebase URL",
+      "regex": "https://[a-z0-9-]+\\.firebaseio\\.com"
+    },
+    {
+      "name": "JWT Token",
+      "regex": "eyJ[A-Za-z0-9-_=]+\\.[A-Za-z0-9-_=]+\\.?[A-Za-z0-9-_.+/=]*"
+    },
+    {
+      "name": "Private Key",
+      "regex": "-----BEGIN (RSA |EC )?PRIVATE KEY-----"
+    }
+  ]
+}
