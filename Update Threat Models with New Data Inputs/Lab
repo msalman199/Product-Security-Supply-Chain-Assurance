@@ -1,0 +1,662 @@
+ Update Threat Models with New Data Inputs
+Objectives
+By the end of this lab, students will be able to:
+
+Integrate telemetry and network data into MITRE ATT&CK-based threat models
+Analyze security events to identify attack patterns and threat indicators
+Automate threat model updates using Python scripts
+Generate actionable threat intelligence reports
+Implement continuous monitoring workflows for dynamic threat modeling
+Prerequisites
+Basic understanding of cybersecurity and threat modeling concepts
+Familiarity with MITRE ATT&CK framework
+Python programming fundamentals
+Linux command line experience
+Knowledge of JSON data formats
+Lab Environment
+Al Nafi provides pre-configured Linux cloud machines for this lab. Click Start Lab to access your environment with all necessary tools installed.
+
+Task 1: Set Up Lab Environment and Generate Sample Data
+Step 1: Create Working Directory Structure
+# Create lab directories
+mkdir -p ~/threat-model-lab/{data/{telemetry,network,threat-models},scripts,output,logs}
+cd ~/threat-model-lab
+
+# Verify structure
+ls -R
+Step 2: Install Required Python Libraries
+# Create virtual environment
+python3 -m venv threat-env
+source threat-env/bin/activate
+
+# Install packages
+pip install pandas numpy matplotlib requests pyyaml
+Step 3: Create Telemetry Data Generator
+Create scripts/telemetry_generator.py:
+
+#!/usr/bin/env python3
+import json
+import random
+from datetime import datetime, timedelta
+
+def generate_telemetry_data(num_events=1000):
+    """
+    Generate sample security telemetry data.
+    
+    Args:
+        num_events: Number of events to generate
+    
+    Returns:
+        List of telemetry event dictionaries
+    
+    TODO: Implement event generation logic
+    TODO: Include MITRE ATT&CK technique IDs (T1055, T1059, T1082, etc.)
+    TODO: Add process names, command lines, network connections
+    TODO: Include severity levels and timestamps
+    """
+    events = []
+    # TODO: Generate events with realistic attack patterns
+    return events
+
+def save_telemetry_data(events, filepath):
+    """
+    Save telemetry data to JSON file.
+    
+    TODO: Implement file writing with proper error handling
+    """
+    pass
+
+if __name__ == "__main__":
+    # TODO: Generate and save telemetry data
+    pass
+Step 4: Create Network Data Generator
+Create scripts/network_data_generator.py:
+
+#!/usr/bin/env python3
+import json
+import random
+from datetime import datetime, timedelta
+
+def generate_network_data(num_flows=500):
+    """
+    Generate sample network analysis data.
+    
+    Args:
+        num_flows: Number of network flows to generate
+    
+    Returns:
+        List of network flow dictionaries
+    
+    TODO: Generate network flows with suspicious IPs and domains
+    TODO: Include threat indicators (C2 traffic, data exfiltration)
+    TODO: Add protocol information and byte counts
+    TODO: Include geolocation data
+    """
+    flows = []
+    # TODO: Generate network flows with threat indicators
+    return flows
+
+def save_network_data(flows, filepath):
+    """
+    Save network data to JSON file.
+    
+    TODO: Implement file writing
+    """
+    pass
+
+if __name__ == "__main__":
+    # TODO: Generate and save network data
+    pass
+Step 5: Execute Data Generators
+cd scripts
+python3 telemetry_generator.py
+python3 network_data_generator.py
+cd ..
+
+# Verify data files created
+ls -lh data/telemetry/
+ls -lh data/network/
+Task 2: Build Threat Model Manager
+Step 1: Create Threat Model Manager Class
+Create scripts/threat_model_manager.py:
+
+#!/usr/bin/env python3
+import json
+from datetime import datetime
+from collections import defaultdict
+
+class ThreatModelManager:
+    """Manages threat model creation and updates."""
+    
+    def __init__(self):
+        """
+        Initialize threat model structure.
+        
+        TODO: Create threat_model dictionary with metadata
+        TODO: Define MITRE ATT&CK technique mappings
+        TODO: Initialize attack_patterns, indicators, mitigations
+        """
+        self.threat_model = {}
+        self.attack_techniques = {}
+    
+    def load_telemetry_data(self, file_path):
+        """
+        Load telemetry data from JSON file.
+        
+        TODO: Implement file reading with error handling
+        TODO: Return list of telemetry events
+        """
+        pass
+    
+    def load_network_data(self, file_path):
+        """
+        Load network analysis data from JSON file.
+        
+        TODO: Implement file reading
+        TODO: Return list of network flows
+        """
+        pass
+    
+    def analyze_telemetry_patterns(self, telemetry_data):
+        """
+        Analyze telemetry data for attack patterns.
+        
+        Args:
+            telemetry_data: List of telemetry events
+        
+        Returns:
+            Dictionary with analysis results
+        
+        TODO: Count technique frequencies
+        TODO: Analyze severity distribution
+        TODO: Track host activity patterns
+        TODO: Return analysis dictionary
+        """
+        pass
+    
+    def analyze_network_patterns(self, network_data):
+        """
+        Analyze network data for threat patterns.
+        
+        Args:
+            network_data: List of network flows
+        
+        Returns:
+            Dictionary with network analysis
+        
+        TODO: Identify malicious IPs and domains
+        TODO: Analyze protocol distribution
+        TODO: Count threat indicators
+        TODO: Return analysis dictionary
+        """
+        pass
+    
+    def update_threat_model(self, telemetry_analysis, network_analysis):
+        """
+        Update threat model with new analysis data.
+        
+        TODO: Map techniques to MITRE ATT&CK framework
+        TODO: Update attack_patterns with frequency and confidence
+        TODO: Add network indicators (IPs, domains)
+        TODO: Update metadata timestamps
+        """
+        pass
+    
+    def generate_threat_report(self):
+        """
+        Generate comprehensive threat report.
+        
+        Returns:
+            Dictionary with threat report
+        
+        TODO: Calculate summary statistics
+        TODO: Identify top threats by frequency
+        TODO: Generate security recommendations
+        TODO: Return report dictionary
+        """
+        pass
+    
+    def generate_recommendations(self):
+        """
+        Generate security recommendations based on threat model.
+        
+        TODO: Analyze high-frequency techniques
+        TODO: Prioritize critical threats
+        TODO: Create actionable recommendations
+        TODO: Return list of recommendation dictionaries
+        """
+        pass
+    
+    def save_threat_model(self, file_path):
+        """
+        Save threat model to JSON file.
+        
+        TODO: Implement file writing with error handling
+        """
+        pass
+    
+    def save_threat_report(self, report, file_path):
+        """
+        Save threat report to JSON file.
+        
+        TODO: Implement file writing
+        """
+        pass
+
+def main():
+    """
+    Main execution function.
+    
+    TODO: Initialize ThreatModelManager
+    TODO: Load telemetry and network data
+    TODO: Analyze both data sources
+    TODO: Update threat model
+    TODO: Generate and save report
+    TODO: Display summary statistics
+    """
+    pass
+
+if __name__ == "__main__":
+    main()
+Step 2: Implement and Execute Threat Model Manager
+cd scripts
+python3 threat_model_manager.py
+cd ..
+
+# Verify outputs
+ls -lh data/threat-models/
+ls -lh output/
+Step 3: Examine Threat Model Output
+# View threat model metadata
+cat data/threat-models/updated_threat_model.json | python3 -c "
+import json, sys
+data = json.load(sys.stdin)
+print('Threat Model Summary:')
+print(f\"  Version: {data['metadata']['version']}\")
+print(f\"  Attack Patterns: {len(data['attack_patterns'])}\")
+print(f\"  Last Updated: {data['metadata']['last_updated']}\")"
+
+# View threat report summary
+cat output/threat_report.json | python3 -c "
+import json, sys
+data = json.load(sys.stdin)
+print('Threat Report Summary:')
+print(f\"  Total Patterns: {data['summary']['total_attack_patterns']}\")
+print(f\"  High Severity: {data['summary']['high_severity_techniques']}\")
+print(f\"  Recommendations: {len(data['recommendations'])}\")"
+Task 3: Automate Threat Model Updates
+Step 1: Create Automated Update Pipeline
+Create scripts/automated_threat_updater.py:
+
+#!/usr/bin/env python3
+import json
+import logging
+from datetime import datetime
+from pathlib import Path
+from threat_model_manager import ThreatModelManager
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('../logs/threat_updater.log'),
+        logging.StreamHandler()
+    ]
+)
+
+class AutomatedThreatUpdater:
+    """Automates threat model updates and alerting."""
+    
+    def __init__(self):
+        """
+        Initialize automated updater.
+        
+        TODO: Initialize ThreatModelManager
+        TODO: Define configuration paths
+        TODO: Set alert thresholds
+        TODO: Create backup directory
+        """
+        self.tm_manager = ThreatModelManager()
+        self.config = {}
+    
+    def backup_current_model(self):
+        """
+        Create timestamped backup of current threat model.
+        
+        TODO: Generate timestamp for backup filename
+        TODO: Copy current model to backup location
+        TODO: Log backup creation
+        """
+        pass
+    
+    def detect_changes(self, old_model, new_model):
+        """
+        Detect significant changes between threat models.
+        
+        Args:
+            old_model: Previous threat model dictionary
+            new_model: Updated threat model dictionary
+        
+        Returns:
+            Dictionary with detected changes
+        
+        TODO: Identify new attack techniques
+        TODO: Detect frequency increases (>50% threshold)
+        TODO: Find new malicious indicators
+        TODO: Track severity changes
+        """
+        pass
+    
+    def generate_alerts(self, changes):
+        """
+        Generate alerts based on detected changes.
+        
+        Args:
+            changes: Dictionary of detected changes
+        
+        Returns:
+            List of alert dictionaries
+        
+        TODO: Check against alert thresholds
+        TODO: Create alerts for new techniques
+        TODO: Alert on high-frequency patterns
+        TODO: Alert on new malicious indicators
+        """
+        pass
+    
+    def send_alerts(self, alerts):
+        """
+        Process and log alerts.
+        
+        TODO: Log each alert with appropriate level
+        TODO: Save alerts to daily log file
+        TODO: In production: send to SIEM, email, Slack
+        """
+        pass
+    
+    def update_threat_model(self):
+        """
+        Main update function.
+        
+        TODO: Backup current model
+        TODO: Load old model for comparison
+        TODO: Load and analyze new data
+        TODO: Update threat model
+        TODO: Detect changes and generate alerts
+        TODO: Save updated model and report
+        TODO: Log summary statistics
+        """
+        pass
+    
+    def generate_metrics_dashboard(self):
+        """
+        Generate metrics for monitoring dashboard.
+        
+        Returns:
+            Dictionary with current metrics
+        
+        TODO: Load current threat model
+        TODO: Calculate key metrics (techniques, severity counts)
+        TODO: Count indicators (IPs, domains)
+        TODO: Return metrics dictionary
+        """
+        pass
+    
+    def run_continuous_monitoring(self, interval_seconds=300):
+        """
+        Run continuous threat model updates.
+        
+        Args:
+            interval_seconds: Update interval in seconds
+        
+        TODO: Implement update loop
+        TODO: Call update_threat_model() periodically
+        TODO: Handle errors gracefully
+        TODO: Log monitoring status
+        """
+        pass
+
+def main():
+    """
+    Main execution function.
+    
+    TODO: Initialize AutomatedThreatUpdater
+    TODO: Run single update or continuous monitoring
+    TODO: Generate metrics dashboard
+    """
+    pass
+
+if __name__ == "__main__":
+    main()
+Step 2: Execute Automated Updater
+cd scripts
+python3 automated_threat_updater.py
+cd ..
+
+# Check logs
+tail -20 logs/threat_updater.log
+
+# Verify backups created
+ls -lh data/threat-models/backups/
+Step 3: Create Visualization Script
+Create scripts/visualize_threats.py:
+
+#!/usr/bin/env python3
+import json
+import matplotlib.pyplot as plt
+from collections import Counter
+
+def load_threat_model(filepath):
+    """
+    Load threat model from file.
+    
+    TODO: Implement file reading
+    """
+    pass
+
+def plot_technique_frequency(threat_model):
+    """
+    Create bar chart of technique frequencies.
+    
+    TODO: Extract technique frequencies
+    TODO: Create matplotlib bar chart
+    TODO: Save to output directory
+    """
+    pass
+
+def plot_severity_distribution(threat_model):
+    """
+    Create pie chart of severity distribution.
+    
+    TODO: Count techniques by severity
+    TODO: Create matplotlib pie chart
+    TODO: Save to output directory
+    """
+    pass
+
+def plot_tactic_coverage(threat_model):
+    """
+    Create horizontal bar chart of MITRE ATT&CK tactics.
+    
+    TODO: Group techniques by tactic
+    TODO: Create matplotlib horizontal bar chart
+    TODO: Save to output directory
+    """
+    pass
+
+def generate_all_visualizations():
+    """
+    Generate all threat model visualizations.
+    
+    TODO: Load threat model
+    TODO: Call all plotting functions
+    TODO: Log completion
+    """
+    pass
+
+if __name__ == "__main__":
+    generate_all_visualizations()
+Step 4: Generate Visualizations
+cd scripts
+python3 visualize_threats.py
+cd ..
+
+# View generated charts
+ls -lh output/*.png
+Task 4: Implement Continuous Integration Workflow
+Step 1: Create Integration Configuration
+Create scripts/threat_intel_config.yaml:
+
+# Threat Intelligence Integration Configuration
+data_sources:
+  telemetry:
+    path: ../data/telemetry/security_telemetry.json
+    enabled: true
+    refresh_interval: 300
+  
+  network:
+    path: ../data/network/network_analysis.json
+    enabled: true
+    refresh_interval: 300
+
+threat_model:
+  output_path: ../data/threat-models/updated_threat_model.json
+  backup_enabled: true
+  backup_retention_days: 30
+
+alerting:
+  enabled: true
+  thresholds:
+    new_techniques: 3
+    high_frequency: 20
+    critical_severity: 5
+  
+  channels:
+    - type: log
+      path: ../logs/alerts.log
+    - type: file
+      path: ../logs/alerts.json
+
+reporting:
+  enabled: true
+  output_path: ../output/threat_report.json
+  schedule: "0 */6 * * *"  # Every 6 hours
+
+monitoring:
+  metrics_enabled: true
+  dashboard_path: ../output/metrics.json
+  update_interval: 60
+Step 2: Create Configuration Loader
+Create scripts/config_loader.py:
+
+#!/usr/bin/env python3
+import yaml
+
+class ConfigLoader:
+    """Loads and validates configuration."""
+    
+    def __init__(self, config_path):
+        """
+        Initialize configuration loader.
+        
+        TODO: Store config path
+        TODO: Initialize config dictionary
+        """
+        pass
+    
+    def load_config(self):
+        """
+        Load configuration from YAML file.
+        
+        TODO: Read YAML file
+        TODO: Parse configuration
+        TODO: Validate required fields
+        TODO: Return config dictionary
+        """
+        pass
+    
+    def validate_config(self, config):
+        """
+        Validate configuration structure.
+        
+        TODO: Check required sections exist
+        TODO: Validate file paths
+        TODO: Verify threshold values
+        TODO: Return validation result
+        """
+        pass
+    
+    def get_data_source_config(self, source_name):
+        """
+        Get configuration for specific data source.
+        
+        TODO: Extract source configuration
+        TODO: Return source config dictionary
+        """
+        pass
+Step 3: Test Complete Workflow
+# Run complete update cycle
+cd scripts
+python3 automated_threat_updater.py
+
+# Check all outputs
+echo "=== Threat Model ==="
+ls -lh ../data/threat-models/
+
+echo "=== Reports ==="
+ls -lh ../output/
+
+echo "=== Logs ==="
+ls -lh ../logs/
+
+echo "=== Backups ==="
+ls -lh ../data/threat-models/backups/
+Expected Outcomes
+After completing this lab, you should have:
+
+Generated sample telemetry and network security data
+Created a functional threat model manager using MITRE ATT&CK framework
+Implemented automated threat model updates with change detection
+Generated threat intelligence reports with actionable recommendations
+Created visualizations of threat patterns and attack techniques
+Established a continuous monitoring workflow with alerting
+Your threat model should include:
+
+Attack patterns mapped to MITRE ATT&CK techniques
+Frequency analysis of observed techniques
+Network threat indicators (malicious IPs, domains)
+Severity classifications and confidence scores
+Security recommendations prioritized by risk
+Troubleshooting Tips
+Issue: Data files not generating
+
+Verify Python script has execute permissions: chmod +x scripts/*.py
+Check virtual environment is activated: source threat-env/bin/activate
+Ensure output directories exist: mkdir -p data/{telemetry,network}
+Issue: JSON parsing errors
+
+Validate JSON syntax: python3 -m json.tool < file.json
+Check file encoding is UTF-8
+Verify file is not empty or corrupted
+Issue: Missing MITRE ATT&CK technique mappings
+
+Ensure technique IDs follow format: T####
+Verify technique exists in MITRE ATT&CK framework
+Check technique dictionary is properly initialized
+Issue: Alerts not generating
+
+Verify alert thresholds in configuration
+Check log file permissions: chmod 644 logs/*.log
+Ensure changes exceed threshold values
+Conclusion
+This lab demonstrated how to integrate real-world security data into dynamic threat models. You learned to automate threat intelligence workflows, analyze attack patterns using the MITRE ATT&CK framework, and generate actionable security recommendations. These skills are essential for maintaining effective security postures in evolving threat landscapes.
+
+Key takeaways:
+
+Threat models must evolve with new data inputs
+Automation enables continuous threat intelligence
+MITRE ATT&CK provides standardized attack pattern classification
+Change detection and alerting enable proactive security responses
+Visualization aids in communicating threat intelligence to stakeholders
+In production environments, extend this workflow by integrating with SIEM platforms, threat intelligence feeds, and automated response systems.
