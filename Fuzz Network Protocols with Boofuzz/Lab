@@ -1,0 +1,618 @@
+Fuzz Network Protocols with Boofuzz
+Objectives
+By the end of this lab, students will be able to:
+
+Install and configure the Boofuzz fuzzing framework
+Create protocol definitions for fuzzing network services
+Execute automated fuzz testing campaigns
+Analyze fuzzing results to identify potential vulnerabilities
+Implement logging and reporting for vulnerability detection
+Prerequisites
+Before starting this lab, students should have:
+
+Basic understanding of network protocols (TCP/IP, HTTP)
+Fundamental Python programming knowledge
+Familiarity with Linux command line operations
+Lab Environment
+Al Nafi provides ready-to-use Linux-based cloud machines for this lab. Simply click Start Lab to access your pre-configured environment with Python 3 and necessary tools pre-installed.
+
+Task 1: Install and Configure Boofuzz
+Step 1.1: Set Up Python Environment
+Create a dedicated workspace and install Boofuzz:
+
+# Create lab directory
+mkdir ~/boofuzz-lab && cd ~/boofuzz-lab
+
+# Create virtual environment
+python3 -m venv boofuzz-env
+source boofuzz-env/bin/activate
+
+# Install Boofuzz and dependencies
+pip install boofuzz
+Step 1.2: Verify Installation
+Create a verification script to test the installation:
+
+# verify_boofuzz.py
+#!/usr/bin/env python3
+
+import boofuzz
+import sys
+
+def verify_installation():
+    """
+    Verify Boofuzz installation and display version.
+    
+    TODO: Import boofuzz module
+    TODO: Print version information
+    TODO: Test basic Session creation
+    TODO: Return True if successful, False otherwise
+    """
+    pass
+
+if __name__ == "__main__":
+    # TODO: Call verify_installation()
+    # TODO: Exit with appropriate status code
+    pass
+Run the verification:
+
+chmod +x verify_boofuzz.py
+python3 verify_boofuzz.py
+Step 1.3: Create Configuration Module
+Build a reusable configuration class:
+
+# boofuzz_config.py
+#!/usr/bin/env python3
+
+import boofuzz
+import logging
+
+class BoofuzzConfig:
+    """Configuration manager for Boofuzz sessions"""
+    
+    def __init__(self, target_host="127.0.0.1", target_port=8080):
+        """
+        Initialize configuration with target details.
+        
+        Args:
+            target_host: IP address of target
+            target_port: Port number of target service
+        
+        TODO: Set instance variables for host, port
+        TODO: Set timeout, crash_threshold, sleep_time
+        """
+        pass
+        
+    def setup_logging(self, log_file="fuzzing.log"):
+        """
+        Configure logging for fuzzing session.
+        
+        Args:
+            log_file: Path to log file
+        
+        TODO: Configure logging with INFO level
+        TODO: Add file and console handlers
+        """
+        pass
+        
+    def create_session(self):
+        """
+        Create and return a configured Boofuzz session.
+        
+        Returns:
+            Configured boofuzz.Session object
+        
+        TODO: Create TCPSocketConnection with target details
+        TODO: Create Target with connection
+        TODO: Create Session with target and parameters
+        TODO: Return session object
+        """
+        pass
+Task 2: Create a Test Server and Protocol Definition
+Step 2.1: Build a Simple Test Server
+Create a basic server that implements a custom protocol:
+
+# test_server.py
+#!/usr/bin/env python3
+
+import socket
+import threading
+import logging
+
+class CustomProtocolServer:
+    """Simple server for fuzzing demonstration"""
+    
+    def __init__(self, host="127.0.0.1", port=8080):
+        """
+        Initialize server with host and port.
+        
+        TODO: Set host, port, and running flag
+        TODO: Configure logging
+        """
+        pass
+        
+    def start_server(self):
+        """
+        Start the server and listen for connections.
+        
+        TODO: Create socket and bind to address
+        TODO: Listen for connections
+        TODO: Accept clients in loop
+        TODO: Spawn thread for each client
+        """
+        pass
+        
+    def handle_client(self, client_socket, address):
+        """
+        Handle individual client connections.
+        
+        Args:
+            client_socket: Socket object for client
+            address: Client address tuple
+        
+        TODO: Receive data from client
+        TODO: Process message with process_message()
+        TODO: Send response back to client
+        TODO: Handle exceptions and close socket
+        """
+        pass
+        
+    def process_message(self, data):
+        """
+        Process protocol messages and return responses.
+        
+        Args:
+            data: Raw bytes received from client
+        
+        Returns:
+            Response bytes to send back
+        
+        TODO: Decode message
+        TODO: Parse command (HELLO, GET, SET, QUIT)
+        TODO: Generate appropriate response
+        TODO: Handle errors gracefully
+        """
+        pass
+        
+    def stop_server(self):
+        """
+        Stop the server gracefully.
+        
+        TODO: Set running flag to False
+        TODO: Close server socket
+        """
+        pass
+
+if __name__ == "__main__":
+    # TODO: Create server instance
+    # TODO: Start server with exception handling
+    # TODO: Handle KeyboardInterrupt for clean shutdown
+    pass
+Step 2.2: Define Protocol for Fuzzing
+Create protocol definitions for Boofuzz:
+
+# protocol_fuzzer.py
+#!/usr/bin/env python3
+
+import boofuzz
+import logging
+from boofuzz_config import BoofuzzConfig
+
+class ProtocolFuzzer:
+    """Fuzzer for custom protocol"""
+    
+    def __init__(self):
+        """
+        Initialize fuzzer with configuration.
+        
+        TODO: Create BoofuzzConfig instance
+        TODO: Setup logging
+        """
+        pass
+        
+    def define_hello_message(self):
+        """
+        Define HELLO message structure.
+        
+        TODO: Initialize message with s_initialize()
+        TODO: Add command string "HELLO"
+        TODO: Add delimiter and client_id (fuzzable)
+        TODO: Add newline terminator
+        """
+        pass
+        
+    def define_get_message(self):
+        """
+        Define GET message structure.
+        
+        TODO: Initialize "get_message"
+        TODO: Add GET command
+        TODO: Add resource parameter (fuzzable)
+        TODO: Add terminator
+        """
+        pass
+        
+    def define_set_message(self):
+        """
+        Define SET message structure.
+        
+        TODO: Initialize "set_message"
+        TODO: Add SET command
+        TODO: Add key and value parameters (both fuzzable)
+        TODO: Add terminator
+        """
+        pass
+        
+    def run_fuzzing_campaign(self):
+        """
+        Execute complete fuzzing campaign.
+        
+        TODO: Create session from config
+        TODO: Define all message types
+        TODO: Connect messages to session
+        TODO: Execute session.fuzz()
+        TODO: Generate summary report
+        """
+        pass
+        
+    def generate_summary_report(self, session):
+        """
+        Generate summary of fuzzing results.
+        
+        Args:
+            session: Completed Boofuzz session
+        
+        TODO: Extract test case count
+        TODO: Extract crash information
+        TODO: Write report to file
+        TODO: Include crash details if any
+        """
+        pass
+Step 2.3: Execute Fuzzing Campaign
+Run the fuzzing test:
+
+# Start test server in background
+python3 test_server.py &
+SERVER_PID=$!
+
+# Wait for server startup
+sleep 2
+
+# Run fuzzer
+python3 protocol_fuzzer.py
+
+# Stop server
+kill $SERVER_PID
+Task 3: Implement Automated Fuzzing Framework
+Step 3.1: Build Automated Framework
+Create a comprehensive automated fuzzing system:
+
+# automated_fuzzer.py
+#!/usr/bin/env python3
+
+import boofuzz
+import subprocess
+import json
+import logging
+from datetime import datetime
+from pathlib import Path
+
+class AutomatedFuzzingFramework:
+    """Automated fuzzing framework with vulnerability logging"""
+    
+    def __init__(self, config_file="fuzzing_config.json"):
+        """
+        Initialize framework with configuration.
+        
+        Args:
+            config_file: Path to JSON configuration
+        
+        TODO: Load configuration from file
+        TODO: Setup logging
+        TODO: Initialize results dictionary
+        TODO: Set server_process to None
+        """
+        pass
+        
+    def load_config(self, config_file):
+        """
+        Load configuration from JSON file.
+        
+        Args:
+            config_file: Path to configuration file
+        
+        Returns:
+            Configuration dictionary
+        
+        TODO: Try to load existing config file
+        TODO: If not found, create default config
+        TODO: Return configuration dictionary
+        """
+        pass
+        
+    def start_target_server(self):
+        """
+        Start target server as subprocess.
+        
+        Returns:
+            True if successful, False otherwise
+        
+        TODO: Start test_server.py as subprocess
+        TODO: Wait for server to initialize
+        TODO: Return success status
+        """
+        pass
+        
+    def stop_target_server(self):
+        """
+        Stop the target server process.
+        
+        TODO: Terminate server process
+        TODO: Wait for process to end
+        """
+        pass
+        
+    def define_http_like_protocol(self):
+        """
+        Define HTTP-like protocol for fuzzing.
+        
+        TODO: Initialize "http_request" message
+        TODO: Add HTTP method (GET, POST, etc.)
+        TODO: Add URI with fuzzable resource
+        TODO: Add HTTP version
+        TODO: Add headers (Host, User-Agent, Content-Length)
+        TODO: Add body section
+        """
+        pass
+        
+    def define_binary_protocol(self):
+        """
+        Define binary protocol for fuzzing.
+        
+        TODO: Initialize "binary_message"
+        TODO: Add magic bytes header
+        TODO: Add version, type, flags (fuzzable)
+        TODO: Add length field
+        TODO: Add random payload data
+        """
+        pass
+        
+    def create_fuzzing_session(self):
+        """
+        Create configured fuzzing session.
+        
+        Returns:
+            Configured boofuzz.Session
+        
+        TODO: Create Target with TCPSocketConnection
+        TODO: Create Session with target and parameters
+        TODO: Return session object
+        """
+        pass
+        
+    def run_protocol_fuzzing(self, protocol_name):
+        """
+        Run fuzzing for specific protocol.
+        
+        Args:
+            protocol_name: Name of protocol to fuzz
+        
+        TODO: Create fuzzing session
+        TODO: Define protocol based on name
+        TODO: Connect protocol to session
+        TODO: Execute fuzzing
+        TODO: Analyze results
+        """
+        pass
+        
+    def analyze_session_results(self, session, protocol_name):
+        """
+        Analyze fuzzing session results.
+        
+        Args:
+            session: Completed session
+            protocol_name: Protocol that was fuzzed
+        
+        TODO: Extract test case count
+        TODO: Extract crash information
+        TODO: Store results in self.results
+        TODO: Identify vulnerabilities from crashes
+        """
+        pass
+        
+    def generate_vulnerability_report(self):
+        """
+        Generate comprehensive vulnerability report.
+        
+        TODO: Calculate statistics (total cases, crashes, rate)
+        TODO: Save JSON report with all results
+        TODO: Generate human-readable text report
+        TODO: Include vulnerability details
+        """
+        pass
+        
+    def run_automated_campaign(self):
+        """
+        Execute complete automated fuzzing campaign.
+        
+        TODO: Start target server
+        TODO: Loop through configured protocols
+        TODO: Run fuzzing for each protocol
+        TODO: Generate final report
+        TODO: Stop target server
+        TODO: Handle exceptions gracefully
+        """
+        pass
+
+if __name__ == "__main__":
+    # TODO: Create AutomatedFuzzingFramework instance
+    # TODO: Run automated campaign
+    # TODO: Handle KeyboardInterrupt
+    pass
+Step 3.2: Create Configuration File
+Create a JSON configuration for the automated fuzzer:
+
+{
+  "target": {
+    "host": "127.0.0.1",
+    "port": 8080
+  },
+  "fuzzing": {
+    "timeout": 5.0,
+    "crash_threshold": 3,
+    "restart_interval": 50,
+    "sleep_time": 0.1
+  },
+  "protocols": [
+    "http_like",
+    "binary"
+  ],
+  "logging": {
+    "level": "INFO",
+    "file": "automated_fuzzing.log"
+  }
+}
+Save this as fuzzing_config.json in your lab directory.
+
+Step 3.3: Run Automated Campaign
+Execute the complete automated fuzzing framework:
+
+# Run automated fuzzer
+python3 automated_fuzzer.py
+
+# View results
+cat vulnerability_report_*.txt
+cat vulnerability_report_*.json
+Step 3.4: Create Results Analysis Script
+Build a script to analyze fuzzing results:
+
+# analyze_results.py
+#!/usr/bin/env python3
+
+import json
+import glob
+from datetime import datetime
+
+class FuzzingResultsAnalyzer:
+    """Analyze and report on fuzzing results"""
+    
+    def __init__(self):
+        """
+        Initialize analyzer.
+        
+        TODO: Create empty results_data list
+        """
+        pass
+        
+    def load_results(self, pattern="vulnerability_report_*.json"):
+        """
+        Load all vulnerability report files.
+        
+        Args:
+            pattern: Glob pattern for report files
+        
+        TODO: Find all matching files
+        TODO: Load JSON data from each file
+        TODO: Append to results_data list
+        """
+        pass
+        
+    def analyze_crash_patterns(self):
+        """
+        Analyze crash patterns across protocols.
+        
+        Returns:
+            Dictionary mapping protocols to crash counts
+        
+        TODO: Iterate through results_data
+        TODO: Extract crash information per protocol
+        TODO: Return crash_data dictionary
+        """
+        pass
+        
+    def generate_summary_statistics(self):
+        """
+        Generate summary statistics from all results.
+        
+        Returns:
+            Dictionary with summary statistics
+        
+        TODO: Calculate total test cases
+        TODO: Calculate total crashes
+        TODO: Calculate crash rate percentage
+        TODO: Count unique vulnerabilities
+        TODO: Return statistics dictionary
+        """
+        pass
+        
+    def print_summary_report(self):
+        """
+        Print formatted summary report to console.
+        
+        TODO: Load all results
+        TODO: Generate statistics
+        TODO: Print formatted report
+        TODO: Include crash patterns
+        TODO: List top vulnerabilities
+        """
+        pass
+
+if __name__ == "__main__":
+    # TODO: Create analyzer instance
+    # TODO: Print summary report
+    pass
+Run the analysis:
+
+python3 analyze_results.py
+Expected Outcomes
+After completing this lab, you should have:
+
+A working Boofuzz installation and configuration
+A custom test server implementing a simple protocol
+Protocol definitions for fuzzing different message types
+An automated fuzzing framework that:
+Starts and stops target servers automatically
+Fuzzes multiple protocols sequentially
+Logs all test cases and crashes
+Generates vulnerability reports in JSON and text formats
+Analysis scripts to review fuzzing results
+Key Files Generated:
+
+fuzzing.log - Detailed fuzzing session logs
+vulnerability_report_*.json - Structured vulnerability data
+vulnerability_report_*.txt - Human-readable reports
+automated_fuzzing.log - Framework execution logs
+Troubleshooting Tips
+Issue: "Connection refused" errors during fuzzing
+
+Ensure test server is running before starting fuzzer
+Verify port 8080 is not already in use: netstat -tlnp | grep 8080
+Check firewall settings if testing remote targets
+Issue: Fuzzer hangs or runs indefinitely
+
+Reduce restart_interval in configuration
+Set lower timeout values (2-3 seconds)
+Limit the number of test cases with session parameters
+Issue: No crashes detected
+
+This is normal for simple test servers
+Try fuzzing real vulnerable services in controlled environments
+Adjust fuzzable parameters to be more aggressive
+Increase the variety of protocol definitions
+Issue: Import errors for boofuzz
+
+Ensure virtual environment is activated: source boofuzz-env/bin/activate
+Reinstall with: pip install --upgrade boofuzz
+Check Python version is 3.6 or higher: python3 --version
+Conclusion
+In this lab, you learned how to use Boofuzz for automated network protocol fuzzing. You installed and configured the framework, created custom protocol definitions, built a test server, and implemented an automated fuzzing system with comprehensive logging and reporting.
+
+Protocol fuzzing is a powerful technique for discovering vulnerabilities in network services. The skills you've developed here form the foundation for security testing of real-world applications. Remember to always obtain proper authorization before fuzzing any systems you don't own.
+
+Key Takeaways:
+
+Boofuzz provides a flexible framework for protocol fuzzing
+Protocol definitions use primitives like s_string(), s_byte(), and s_delim()
+Automated frameworks improve efficiency and consistency
+Proper logging and reporting are essential for vulnerability analysis
+Always test in controlled environments with permission
+Continue practicing by creating protocol definitions for other common protocols (FTP, SMTP, DNS) and analyzing how different services respond to malformed input.
