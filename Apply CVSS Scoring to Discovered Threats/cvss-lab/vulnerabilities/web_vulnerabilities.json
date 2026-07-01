@@ -1,0 +1,32 @@
+{
+  "vulnerabilities": [
+    {
+      "id": "WEB-001",
+      "name": "Remote Code Execution",
+      "description": "Unauthenticated RCE in file upload",
+      "cve": "CVE-2023-99999",
+      "attack_vector": "Network",
+      "attack_complexity": "Low",
+      "privileges_required": "None",
+      "user_interaction": "None",
+      "scope": "Changed",
+      "confidentiality_impact": "High",
+      "integrity_impact": "High",
+      "availability_impact": "High"
+    },
+    {
+      "id": "WEB-002",
+      "name": "Information Disclosure",
+      "description": "Sensitive data exposure in API",
+      "cve": "CVE-2023-88888",
+      "attack_vector": "Network",
+      "attack_complexity": "Low",
+      "privileges_required": "Low",
+      "user_interaction": "None",
+      "scope": "Unchanged",
+      "confidentiality_impact": "High",
+      "integrity_impact": "None",
+      "availability_impact": "None"
+    }
+  ]
+}
