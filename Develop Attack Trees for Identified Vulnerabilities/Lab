@@ -1,0 +1,607 @@
+Develop Attack Trees for Identified Vulnerabilities
+Objectives
+By the end of this lab, students will be able to:
+
+Understand attack tree methodology and create structured attack trees for system vulnerabilities
+Map complex attack paths and chain multiple vulnerabilities together
+Develop Python scripts for attack tree generation and analysis
+Analyze attack scenarios to prioritize security remediation efforts
+Document attack vectors in a structured format for security assessments
+Prerequisites
+Before starting this lab, students should have:
+
+Basic understanding of cybersecurity concepts and common vulnerabilities (SQL injection, XSS, authentication weaknesses)
+Familiarity with Python programming and Linux command line
+Knowledge of network security fundamentals and attack vectors
+Lab Environment
+Al Nafi provides ready-to-use Linux-based cloud machines for this lab. Click Start Lab to access your pre-configured environment with:
+
+Ubuntu 22.04 LTS
+Python 3.10+ with required libraries
+Text editors (nano, vim)
+Graphical tools for visualization
+Task 1: Set Up Environment and Create Vulnerability Dataset
+Step 1.1: Prepare Working Directory
+# Create project structure
+mkdir -p ~/attack-trees-lab/{data,scripts,output}
+cd ~/attack-trees-lab
+
+# Install required packages
+sudo apt update
+sudo apt install -y python3-pip graphviz
+pip3 install networkx matplotlib anytree
+Step 1.2: Create Sample Vulnerability Data
+Create a JSON file with sample vulnerabilities:
+
+cat > data/vulnerabilities.json << 'EOF'
+{
+  "web_application": {
+    "vulnerabilities": [
+      {
+        "id": "VULN-001",
+        "type": "SQL Injection",
+        "severity": "High",
+        "location": "Login form",
+        "cvss_score": 8.5
+      },
+      {
+        "id": "VULN-002",
+        "type": "Cross-Site Scripting",
+        "severity": "Medium",
+        "location": "Comment section",
+        "cvss_score": 6.1
+      },
+      {
+        "id": "VULN-003",
+        "type": "Weak Authentication",
+        "severity": "High",
+        "location": "Password policy",
+        "cvss_score": 7.8
+      }
+    ]
+  },
+  "network": {
+    "vulnerabilities": [
+      {
+        "id": "VULN-004",
+        "type": "Unencrypted Communication",
+        "severity": "High",
+        "location": "Database connection",
+        "cvss_score": 7.5
+      }
+    ]
+  }
+}
+EOF
+Task 2: Implement Attack Tree Framework
+Step 2.1: Create Attack Tree Node Class
+Create scripts/attack_tree.py:
+
+#!/usr/bin/env python3
+"""
+Attack Tree Framework for Vulnerability Analysis
+Students: Complete the TODO sections to implement full functionality
+"""
+
+import json
+from typing import List, Optional
+
+class AttackTreeNode:
+    """
+    Represents a node in an attack tree.
+    
+    Attributes:
+        name: Node description
+        node_type: "AND", "OR", or "LEAF"
+        probability: Success probability (0.0-1.0)
+        impact: Impact score (0.0-10.0)
+        cost: Attack cost estimate
+    """
+    
+    def __init__(self, name: str, node_type: str = "AND", 
+                 probability: float = 0.0, impact: float = 0.0, cost: float = 0.0):
+        self.name = name
+        self.node_type = node_type
+        self.probability = probability
+        self.impact = impact
+        self.cost = cost
+        self.children: List[AttackTreeNode] = []
+        self.parent: Optional[AttackTreeNode] = None
+    
+    def add_child(self, child: 'AttackTreeNode') -> None:
+        """
+        Add a child node to this node.
+        
+        Args:
+            child: Child node to add
+        """
+        # TODO: Set the child's parent to this node
+        # TODO: Append child to children list
+        pass
+    
+    def calculate_risk(self) -> float:
+        """
+        Calculate risk score for this node based on type.
+        
+        Returns:
+            Risk score (probability * impact)
+        
+        Logic:
+            - LEAF: Direct calculation
+            - AND: All children must succeed (multiply probabilities)
+            - OR: At least one succeeds (additive probability)
+        """
+        # TODO: Implement LEAF node calculation
+        # TODO: Implement AND node calculation (multiply child probabilities)
+        # TODO: Implement OR node calculation (additive probability formula)
+        # TODO: Return final risk score
+        pass
+
+
+class AttackTree:
+    """
+    Main attack tree structure.
+    """
+    
+    def __init__(self, goal: str):
+        """
+        Initialize attack tree with root goal.
+        
+        Args:
+            goal: Root goal description
+        """
+        self.root = AttackTreeNode(goal, "OR")
+        self.nodes = [self.root]
+    
+    def add_node(self, parent_name: str, node_name: str, 
+                 node_type: str = "AND", probability: float = 0.0,
+                 impact: float = 0.0, cost: float = 0.0) -> Optional[AttackTreeNode]:
+        """
+        Add a node to the tree under specified parent.
+        
+        Args:
+            parent_name: Name of parent node
+            node_name: Name of new node
+            node_type: Type of node (AND/OR/LEAF)
+            probability: Success probability
+            impact: Impact score
+            cost: Attack cost
+        
+        Returns:
+            Created node or None if parent not found
+        """
+        # TODO: Find parent node by name
+        # TODO: Create new AttackTreeNode
+        # TODO: Add new node as child of parent
+        # TODO: Append to self.nodes list
+        # TODO: Return new node
+        pass
+    
+    def find_node(self, name: str) -> Optional[AttackTreeNode]:
+        """
+        Find a node by name.
+        
+        Args:
+            name: Node name to search for
+        
+        Returns:
+            Found node or None
+        """
+        # TODO: Iterate through self.nodes
+        # TODO: Return node if name matches
+        pass
+    
+    def print_tree(self, node: Optional[AttackTreeNode] = None, level: int = 0) -> None:
+        """
+        Print tree structure recursively.
+        
+        Args:
+            node: Starting node (default: root)
+            level: Indentation level
+        """
+        # TODO: Use root if node is None
+        # TODO: Print node with indentation
+        # TODO: Recursively print children
+        pass
+
+
+# Test code
+if __name__ == "__main__":
+    tree = AttackTree("Compromise Web Application")
+    tree.add_node("Compromise Web Application", "SQL Injection", "LEAF", 0.8, 9.0, 50)
+    tree.print_tree()
+Step 2.2: Create Vulnerability-Specific Attack Trees
+Create scripts/vuln_attack_trees.py:
+
+#!/usr/bin/env python3
+"""
+Generate attack trees for specific vulnerability types.
+Students: Implement the tree generation methods.
+"""
+
+import json
+import sys
+from attack_tree import AttackTree, AttackTreeNode
+
+class VulnerabilityAttackTreeGenerator:
+    """Generate attack trees for identified vulnerabilities."""
+    
+    def __init__(self, vulnerability_file: str):
+        """
+        Initialize generator with vulnerability data.
+        
+        Args:
+            vulnerability_file: Path to JSON vulnerability file
+        """
+        # TODO: Load JSON file
+        # TODO: Initialize attack_trees dictionary
+        pass
+    
+    def create_sql_injection_tree(self, vuln_data: dict) -> AttackTree:
+        """
+        Create attack tree for SQL injection vulnerability.
+        
+        Args:
+            vuln_data: Vulnerability information dictionary
+        
+        Returns:
+            Complete attack tree
+        
+        Tree Structure:
+            Root: Exploit SQL Injection
+            ├── Bypass Authentication (AND)
+            │   ├── Identify Injection Point (LEAF)
+            │   ├── Craft Payload (LEAF)
+            │   └── Execute Injection (LEAF)
+            └── Extract Data (AND)
+                ├── Enumerate Schema (LEAF)
+                └── Extract Credentials (LEAF)
+        """
+        # TODO: Create AttackTree with root goal
+        # TODO: Add main attack paths (OR nodes)
+        # TODO: Add authentication bypass path (AND node with LEAF children)
+        # TODO: Add data extraction path (AND node with LEAF children)
+        # TODO: Return completed tree
+        pass
+    
+    def create_xss_tree(self, vuln_data: dict) -> AttackTree:
+        """
+        Create attack tree for XSS vulnerability.
+        
+        Args:
+            vuln_data: Vulnerability information
+        
+        Returns:
+            Complete attack tree
+        
+        Tree Structure:
+            Root: Exploit XSS
+            ├── Steal Session Cookies (AND)
+            │   ├── Inject Script (LEAF)
+            │   ├── Victim Visits Page (LEAF)
+            │   └── Extract Cookies (LEAF)
+            └── Phishing Attack (AND)
+                ├── Create Phishing Page (LEAF)
+                └── Inject Redirect (LEAF)
+        """
+        # TODO: Implement XSS attack tree structure
+        pass
+    
+    def create_weak_auth_tree(self, vuln_data: dict) -> AttackTree:
+        """
+        Create attack tree for weak authentication.
+        
+        Args:
+            vuln_data: Vulnerability information
+        
+        Returns:
+            Complete attack tree
+        
+        Tree Structure:
+            Root: Exploit Weak Authentication
+            ├── Brute Force (AND)
+            │   ├── Identify Usernames (LEAF)
+            │   └── Automated Attempts (LEAF)
+            └── Dictionary Attack (AND)
+                ├── Obtain Password List (LEAF)
+                └── Test Passwords (LEAF)
+        """
+        # TODO: Implement weak authentication attack tree
+        pass
+    
+    def generate_all_trees(self) -> dict:
+        """
+        Generate attack trees for all vulnerabilities.
+        
+        Returns:
+            Dictionary mapping vulnerability IDs to attack trees
+        """
+        # TODO: Iterate through all vulnerabilities
+        # TODO: Determine vulnerability type
+        # TODO: Call appropriate tree creation method
+        # TODO: Store in attack_trees dictionary
+        # TODO: Return dictionary
+        pass
+    
+    def print_all_trees(self) -> None:
+        """Print all generated attack trees."""
+        # TODO: Iterate through attack_trees
+        # TODO: Print header for each vulnerability
+        # TODO: Call print_tree() for each tree
+        pass
+
+
+if __name__ == "__main__":
+    generator = VulnerabilityAttackTreeGenerator("../data/vulnerabilities.json")
+    generator.generate_all_trees()
+    generator.print_all_trees()
+Task 3: Map Attack Paths and Chain Vulnerabilities
+Step 3.1: Create Attack Path Mapper
+Create scripts/attack_path_mapper.py:
+
+#!/usr/bin/env python3
+"""
+Map and analyze attack paths that chain multiple vulnerabilities.
+Students: Complete the path analysis methods.
+"""
+
+import json
+import networkx as nx
+from typing import List, Dict, Tuple
+
+class AttackPathMapper:
+    """Map attack paths across multiple vulnerabilities."""
+    
+    def __init__(self, vulnerability_file: str):
+        """
+        Initialize mapper with vulnerability data.
+        
+        Args:
+            vulnerability_file: Path to JSON file
+        """
+        # TODO: Load vulnerability data
+        # TODO: Initialize directed graph (nx.DiGraph)
+        # TODO: Initialize vulnerability_chains list
+        pass
+    
+    def build_attack_graph(self) -> nx.DiGraph:
+        """
+        Build directed graph of vulnerability relationships.
+        
+        Returns:
+            NetworkX directed graph
+        
+        Steps:
+            1. Add nodes for each vulnerability with attributes
+            2. Define edges representing attack chains
+            3. Add edge attributes (relationship type, description)
+        """
+        # TODO: Iterate through vulnerabilities and add nodes
+        # TODO: Call define_attack_relationships()
+        # TODO: Return graph
+        pass
+    
+    def define_attack_relationships(self) -> None:
+        """
+        Define how vulnerabilities can be chained.
+        
+        Example chains:
+            - Weak Auth -> SQL Injection (enables)
+            - SQL Injection -> Unencrypted Comm (leverages)
+            - XSS -> Weak Auth (bypasses)
+        """
+        # TODO: Define attack chain relationships
+        # TODO: Add edges to graph with attributes
+        pass
+    
+    def find_attack_paths(self, start_vuln: str = None, 
+                         end_vuln: str = None) -> List[List[str]]:
+        """
+        Find all attack paths between vulnerabilities.
+        
+        Args:
+            start_vuln: Starting vulnerability ID (optional)
+            end_vuln: Target vulnerability ID (optional)
+        
+        Returns:
+            List of paths (each path is list of vulnerability IDs)
+        """
+        # TODO: If start and end specified, find paths between them
+        # TODO: Otherwise, find all possible paths in graph
+        # TODO: Use nx.all_simple_paths()
+        # TODO: Return list of paths
+        pass
+    
+    def calculate_path_risk(self, path: List[str]) -> float:
+        """
+        Calculate overall risk score for an attack path.
+        
+        Args:
+            path: List of vulnerability IDs
+        
+        Returns:
+            Risk score
+        
+        Formula:
+            - Sum CVSS scores weighted by position
+            - Apply length penalty (longer = less likely)
+        """
+        # TODO: Initialize total_risk
+        # TODO: Iterate through path and sum weighted CVSS scores
+        # TODO: Apply length penalty
+        # TODO: Return final risk score
+        pass
+    
+    def generate_attack_scenarios(self) -> Dict[str, List[Dict]]:
+        """
+        Generate categorized attack scenarios.
+        
+        Returns:
+            Dictionary with scenario categories:
+                - high_impact_scenarios
+                - multi_stage_scenarios
+                - privilege_escalation_scenarios
+        """
+        # TODO: Find all attack paths
+        # TODO: Calculate risk for each path
+        # TODO: Categorize scenarios by risk and characteristics
+        # TODO: Sort by risk score
+        # TODO: Return scenarios dictionary
+        pass
+    
+    def print_attack_scenarios(self) -> None:
+        """Print formatted attack scenarios."""
+        # TODO: Iterate through scenario categories
+        # TODO: Print top scenarios with risk scores
+        # TODO: Include path and description
+        pass
+
+
+if __name__ == "__main__":
+    mapper = AttackPathMapper("../data/vulnerabilities.json")
+    mapper.build_attack_graph()
+    scenarios = mapper.generate_attack_scenarios()
+    mapper.print_attack_scenarios()
+Step 3.2: Execute Attack Path Analysis
+# Run the attack path mapper
+cd ~/attack-trees-lab/scripts
+python3 attack_path_mapper.py
+
+# Expected output: Categorized attack scenarios with risk scores
+Task 4: Analyze and Prioritize Remediation
+Step 4.1: Create Risk Analysis Script
+Create scripts/risk_analyzer.py:
+
+#!/usr/bin/env python3
+"""
+Analyze attack trees and prioritize remediation efforts.
+Students: Implement risk analysis and prioritization logic.
+"""
+
+from typing import List, Dict, Tuple
+import json
+
+class RiskAnalyzer:
+    """Analyze attack trees and prioritize remediation."""
+    
+    def __init__(self, attack_trees: dict, attack_scenarios: dict):
+        """
+        Initialize analyzer with attack data.
+        
+        Args:
+            attack_trees: Dictionary of attack trees
+            attack_scenarios: Dictionary of attack scenarios
+        """
+        # TODO: Store attack trees and scenarios
+        # TODO: Initialize remediation_priorities list
+        pass
+    
+    def calculate_vulnerability_criticality(self, vuln_id: str) -> float:
+        """
+        Calculate criticality score for a vulnerability.
+        
+        Args:
+            vuln_id: Vulnerability identifier
+        
+        Returns:
+            Criticality score (0-10)
+        
+        Factors:
+            - CVSS base score
+            - Number of attack paths using this vulnerability
+            - Position in attack chains (early = more critical)
+        """
+        # TODO: Get CVSS score
+        # TODO: Count attack paths involving this vulnerability
+        # TODO: Calculate position weight
+        # TODO: Return weighted criticality score
+        pass
+    
+    def prioritize_remediation(self) -> List[Dict]:
+        """
+        Generate prioritized remediation list.
+        
+        Returns:
+            Sorted list of vulnerabilities with priorities
+        
+        Priority levels:
+            - Critical: Score > 8.0
+            - High: Score > 6.0
+            - Medium: Score > 4.0
+            - Low: Score <= 4.0
+        """
+        # TODO: Calculate criticality for each vulnerability
+        # TODO: Assign priority levels
+        # TODO: Sort by criticality score
+        # TODO: Return prioritized list
+        pass
+    
+    def generate_remediation_report(self, output_file: str) -> None:
+        """
+        Generate comprehensive remediation report.
+        
+        Args:
+            output_file: Path to output JSON file
+        
+        Report includes:
+            - Vulnerability details
+            - Criticality scores
+            - Attack paths affected
+            - Recommended actions
+        """
+        # TODO: Create report structure
+        # TODO: Add vulnerability details and priorities
+        # TODO: Include affected attack paths
+        # TODO: Write to JSON file
+        pass
+
+
+if __name__ == "__main__":
+    # TODO: Load attack trees and scenarios
+    # TODO: Create RiskAnalyzer instance
+    # TODO: Generate prioritized remediation list
+    # TODO: Print results
+    pass
+Step 4.2: Generate Remediation Report
+# Run risk analysis
+python3 risk_analyzer.py
+
+# View generated report
+cat ../output/remediation_report.json
+Expected Outcomes
+After completing this lab, students should have:
+
+Functional attack tree framework with node types (AND/OR/LEAF)
+Attack trees for multiple vulnerability types (SQL injection, XSS, weak authentication)
+Attack path mapping showing vulnerability chains
+Risk analysis with prioritized remediation recommendations
+Understanding of how vulnerabilities can be chained in multi-stage attacks
+Troubleshooting Tips
+Issue: Import errors for custom modules
+
+Solution: Ensure scripts are in the same directory or add to Python path: export PYTHONPATH="${PYTHONPATH}:~/attack-trees-lab/scripts"
+Issue: Graph visualization not working
+
+Solution: Install missing dependencies: pip3 install matplotlib networkx --upgrade
+Issue: JSON parsing errors
+
+Solution: Validate JSON syntax using: python3 -m json.tool data/vulnerabilities.json
+Issue: Risk calculations returning zero
+
+Solution: Verify probability and impact values are set correctly (0.0-1.0 for probability, 0.0-10.0 for impact)
+Conclusion
+This lab introduced attack tree methodology for analyzing security vulnerabilities. Students learned to:
+
+Model attack scenarios using hierarchical tree structures
+Chain multiple vulnerabilities into complex attack paths
+Calculate risk scores based on probability and impact
+Prioritize remediation efforts using quantitative analysis
+Attack trees provide a structured approach to threat modeling and help security teams understand how attackers might exploit system weaknesses. This methodology is essential for comprehensive security assessments and risk management.
+
+Key Takeaways:
+
+Attack trees visualize attacker goals and required steps
+AND/OR logic models different attack path requirements
+Vulnerability chaining increases overall system risk
+Quantitative risk analysis enables data-driven security decisions
+Continue practicing by creating attack trees for additional vulnerability types and more complex attack scenarios.
