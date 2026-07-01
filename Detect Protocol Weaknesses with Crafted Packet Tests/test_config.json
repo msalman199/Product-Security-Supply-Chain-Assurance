@@ -1,0 +1,22 @@
+{
+  "tests": {
+    "basic_functionality": true,
+    "authentication_bypass": true,
+    "buffer_overflow": true,
+    "command_injection": true,
+    "protocol_fuzzing": true
+  },
+  "payloads": {
+    "command_injection": [
+      "; ls -la",
+      "| whoami",
+      "&& cat /etc/passwd"
+    ],
+    "buffer_sizes": [100, 1000, 5000, 10000],
+    "command_range": [1, 1000]
+  },
+  "timeouts": {
+    "default": 5,
+    "fuzzing": 2
+  }
+}
