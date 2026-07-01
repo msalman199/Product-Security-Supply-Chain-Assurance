@@ -1,0 +1,56 @@
+Draft Responsible Disclosure Reports
+Objectives
+Design and implement a structured vulnerability classification engine that scores and categorizes security findings using CVSS-aligned logic
+Build an automated report generation pipeline that produces professional Markdown disclosure reports from raw vulnerability data
+Produce a complete, vendor-ready responsible disclosure report for a realistic vulnerability scenario
+Prerequisites
+Comfort with the Linux command line, including file permissions, directory navigation, and running Python scripts
+Basic Python programming knowledge, including classes, file I/O, and JSON handling
+Familiarity with common web vulnerability types such as SQL injection, XSS, and authentication bypass
+Lab Environment
+You will work on a dedicated AWS EC2 Ubuntu instance provided by Al Nafi. The instance has a base Ubuntu installation; you will install all required tools in Task 1.
+
+Task 1: Environment Setup
+Step 1: Install Python, pip, and required libraries
+Run the following commands to update the package index and install all tools needed for this lab.
+
+sudo apt-get update
+sudo apt-get install -y python3 python3-pip git
+pip3 install jsonschema jinja2
+Troubleshoot this step:
+
+You may see "E: Could not get lock /var/lib/dpkg/lock-frontend" if another process is using apt.
+Run sudo lsof /var/lib/dpkg/lock-frontend to identify the blocking process, then wait for it to finish or kill it with sudo kill -9 <PID>.
+Official apt documentation: https://manpages.ubuntu.com/manpages/jammy/man8/apt-get.8.html
+Step 2: Verify all tools are available and record versions
+python3 --version
+pip3 show jsonschema | grep Version
+pip3 show jinja2 | grep Version
+git --version
+You should see version strings printed for each tool with no "command not found" errors. If any version line is missing, re-run the install command for that specific package before continuing.
+
+Task 2: Design and Implement a Vulnerability Classification and Report Generation System
+Problem Statement
+Design and implement a self-contained Python system, organized however you choose, that does two things. First, it must accept raw vulnerability attributes as input (at minimum: vulnerability name, type, affected system, confidentiality impact, integrity impact, availability impact, and attack complexity) and produce a numeric CVSS Base Score (0.0 to 10.0) together with a severity label (Critical, High, Medium, Low, or Informational) using a documented scoring formula of your own design that is consistent and reproducible. Second, it must take that scored vulnerability object and render a complete Markdown disclosure report saved to disk, containing at minimum: an executive summary, affected component details, reproduction steps, impact assessment, and remediation recommendations. The system must be runnable from the command line and accept input either interactively or from a JSON file you define.
+
+You must also define a JSON schema file that formally describes every field your input format accepts, and your system must validate incoming JSON against that schema before generating any report, rejecting invalid input with a descriptive error message.
+
+Acceptance Criteria
+Running the system against a valid JSON input file produces a .md report file on disk whose content includes all five required sections (executive summary, affected component details, reproduction steps, impact assessment, remediation recommendations), and the CVSS score embedded in the report falls within the 0.0 to 10.0 range with the correct severity label for that score according to your documented formula.
+Running the system against a JSON file that is missing one required field (for example, omitting affected_system) causes the program to exit with a non-zero status code and print a human-readable validation error identifying the missing field by name, without creating any partial report file on disk.
+Task 3: Produce a Complete Vendor-Ready Responsible Disclosure Report
+Problem Statement
+Using the system you built in Task 2, produce a complete, realistic responsible disclosure report for the following scenario. A penetration tester has discovered that the login endpoint /api/v1/auth/login of a fictional web application called "NexaPortal v3.4.2" accepts the username parameter without sanitization, allowing an unauthenticated attacker to inject SQL and retrieve all rows from the users table by submitting the payload ' OR '1'='1' -- as the username with any password. The tester confirmed the finding on 2025-06-10, observed that the server returns a 200 OK with a full JSON array of user records including password hashes, and assessed confidentiality impact as High, integrity impact as Low, and availability impact as None with Low attack complexity.
+
+You must author a JSON input file that captures all details of this scenario according to your schema, run it through your generation system, and then manually review and edit the output Markdown file to ensure the reproduction steps are written in clear numbered prose, the remediation section recommends at minimum three specific developer actions (for example: parameterized queries, input validation, and least-privilege database accounts), and the disclosure timeline section lists realistic dates for initial contact, expected acknowledgment, and a 90-day public disclosure deadline calculated from the discovery date.
+
+Finally, write a short cover email as a plain .txt file addressed to security@nexacorp.example that references the report filename, states the severity and CVSS score, and requests acknowledgment within five business days.
+
+Acceptance Criteria
+The final .md report file passes a manual review confirming it contains: a CVSS score between 7.0 and 10.0 (consistent with High or Critical severity for the described impact), at least three numbered reproduction steps that match the described SQL injection scenario, and at least three distinct remediation recommendations.
+The cover email .txt file is present on disk, references the exact report filename, states the severity label and numeric CVSS score, and contains a sentence requesting acknowledgment within five business days.
+Expected Outcomes
+A working command-line Python system that validates JSON vulnerability input, computes a CVSS-aligned score, and renders structured Markdown disclosure reports
+A complete, vendor-ready disclosure package consisting of a professional Markdown vulnerability report and a cover email for the NexaPortal SQL injection scenario
+Conclusion
+This lab required you to design a disclosure reporting system from first principles, enforcing the discipline of schema validation, reproducible scoring, and structured professional communication that real security researchers apply before contacting a vendor. The SQL injection scenario in Task 3 mirrors the format expected by bug bounty programs and coordinated disclosure processes used across the industry. Producing a cover email alongside the technical report reinforces that responsible disclosure is as much a communication practice as a technical one.
