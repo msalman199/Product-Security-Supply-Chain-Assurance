@@ -1,0 +1,612 @@
+Apply CVSS Scoring to Discovered Threats
+Objectives
+By the end of this lab, students will be able to:
+
+Understand the CVSS v3.1 framework and its metric components
+Manually calculate CVSS base scores for vulnerabilities
+Implement Python scripts to automate CVSS scoring
+Generate structured vulnerability reports with risk assessments
+Prioritize vulnerabilities based on CVSS severity ratings
+Prerequisites
+Basic understanding of cybersecurity and vulnerability concepts
+Familiarity with Linux command line operations
+Basic Python programming knowledge (functions, dictionaries, file I/O)
+Understanding of common vulnerability types (SQL injection, XSS, etc.)
+Lab Environment
+Your cloud machine includes:
+
+Python 3.8+
+Text editors (nano, vim)
+JSON processing capabilities
+Pre-configured directory structure
+Click Start Lab to access your environment.
+
+Task 1: Understanding CVSS Framework
+Step 1: Learn CVSS v3.1 Metrics
+CVSS v3.1 Base Metrics consist of:
+
+Exploitability Metrics:
+
+Attack Vector (AV): Network (N), Adjacent (A), Local (L), Physical (P)
+Attack Complexity (AC): Low (L), High (H)
+Privileges Required (PR): None (N), Low (L), High (H)
+User Interaction (UI): None (N), Required (R)
+Scope (S): Unchanged (U), Changed (C)
+
+Impact Metrics:
+
+Confidentiality (C): None (N), Low (L), High (H)
+Integrity (I): None (N), Low (L), High (H)
+Availability (A): None (N), Low (L), High (H)
+Severity Ratings:
+
+None: 0.0
+Low: 0.1-3.9
+Medium: 4.0-6.9
+High: 7.0-8.9
+Critical: 9.0-10.0
+Step 2: Create Lab Directory Structure
+mkdir -p ~/cvss-lab/{vulnerabilities,scripts,reports}
+cd ~/cvss-lab
+Step 3: Create Sample Vulnerability Data
+Create vulnerability dataset:
+
+nano vulnerabilities/sample_vulnerabilities.json
+Add sample data:
+
+{
+  "vulnerabilities": [
+    {
+      "id": "VULN-001",
+      "name": "SQL Injection in Login Form",
+      "description": "Unauthenticated SQL injection vulnerability",
+      "cve": "CVE-2023-12345",
+      "attack_vector": "Network",
+      "attack_complexity": "Low",
+      "privileges_required": "None",
+      "user_interaction": "None",
+      "scope": "Unchanged",
+      "confidentiality_impact": "High",
+      "integrity_impact": "High",
+      "availability_impact": "High"
+    },
+    {
+      "id": "VULN-002",
+      "name": "Stored XSS Vulnerability",
+      "description": "Stored XSS in comment section",
+      "cve": "CVE-2023-12346",
+      "attack_vector": "Network",
+      "attack_complexity": "Low",
+      "privileges_required": "Low",
+      "user_interaction": "Required",
+      "scope": "Changed",
+      "confidentiality_impact": "Low",
+      "integrity_impact": "Low",
+      "availability_impact": "None"
+    },
+    {
+      "id": "VULN-003",
+      "name": "Local Privilege Escalation",
+      "description": "Privilege escalation via misconfigured service",
+      "cve": "CVE-2023-12347",
+      "attack_vector": "Local",
+      "attack_complexity": "Low",
+      "privileges_required": "Low",
+      "user_interaction": "None",
+      "scope": "Unchanged",
+      "confidentiality_impact": "High",
+      "integrity_impact": "High",
+      "availability_impact": "High"
+    }
+  ]
+}
+Step 4: Manual CVSS Calculation Exercise
+Create a manual calculation worksheet:
+
+nano vulnerabilities/manual_calculation.txt
+Practice calculating CVSS for VULN-001:
+
+CVSS v3.1 Manual Calculation - VULN-001
+========================================
+
+Metric Values:
+- AV: Network = 0.85
+- AC: Low = 0.77
+- PR: None = 0.85
+- UI: None = 0.85
+- S: Unchanged
+- C: High = 0.56
+- I: High = 0.56
+- A: High = 0.56
+
+Exploitability = 8.22 × AV × AC × PR × UI
+Impact (Unchanged) = 6.42 × (1 - [(1-C) × (1-I) × (1-A)])
+Base Score = Roundup(min(Impact + Exploitability, 10))
+
+Calculate the final score and severity rating.
+Task 2: Implement CVSS Calculator
+Step 1: Create CVSS Calculator Class
+Create the calculator script:
+
+nano scripts/cvss_calculator.py
+Implement the calculator (students complete the TODOs):
+
+#!/usr/bin/env python3
+"""
+CVSS v3.1 Calculator
+Students: Complete the TODO sections to implement CVSS scoring
+"""
+
+import json
+import math
+from typing import Dict, List
+
+class CVSSCalculator:
+    """CVSS v3.1 Base Score Calculator"""
+    
+    # CVSS v3.1 metric values
+    ATTACK_VECTOR = {
+        'Network': 0.85,
+        'Adjacent': 0.62,
+        'Local': 0.55,
+        'Physical': 0.2
+    }
+    
+    ATTACK_COMPLEXITY = {
+        'Low': 0.77,
+        'High': 0.44
+    }
+    
+    PRIVILEGES_REQUIRED = {
+        'None': 0.85,
+        'Low': 0.62,
+        'High': 0.27
+    }
+    
+    PRIVILEGES_REQUIRED_CHANGED = {
+        'None': 0.85,
+        'Low': 0.68,
+        'High': 0.5
+    }
+    
+    USER_INTERACTION = {
+        'None': 0.85,
+        'Required': 0.62
+    }
+    
+    IMPACT_METRICS = {
+        'None': 0.0,
+        'Low': 0.22,
+        'High': 0.56
+    }
+    
+    def calculate_exploitability_score(self, av: float, ac: float, pr: float, ui: float) -> float:
+        """
+        Calculate exploitability score.
+        Formula: 8.22 × AV × AC × PR × UI
+        
+        Args:
+            av: Attack Vector value
+            ac: Attack Complexity value
+            pr: Privileges Required value
+            ui: User Interaction value
+        
+        Returns:
+            Exploitability score
+        """
+        # TODO: Implement exploitability calculation
+        pass
+    
+    def calculate_impact_score(self, c: float, i: float, a: float, scope: str) -> float:
+        """
+        Calculate impact score based on CIA triad and scope.
+        
+        Args:
+            c: Confidentiality impact value
+            i: Integrity impact value
+            a: Availability impact value
+            scope: Scope (Unchanged or Changed)
+        
+        Returns:
+            Impact score
+        """
+        # TODO: Calculate ISS = 1 - [(1-C) × (1-I) × (1-A)]
+        # TODO: If scope is Unchanged: return 6.42 × ISS
+        # TODO: If scope is Changed: return 7.52 × (ISS - 0.029) - 3.25 × (ISS - 0.02)^15
+        pass
+    
+    def calculate_base_score(self, exploitability: float, impact: float, scope: str) -> float:
+        """
+        Calculate CVSS base score.
+        
+        Args:
+            exploitability: Exploitability score
+            impact: Impact score
+            scope: Scope value
+        
+        Returns:
+            CVSS base score (0.0-10.0)
+        """
+        # TODO: If impact <= 0, return 0.0
+        # TODO: If scope is Unchanged: score = min(impact + exploitability, 10)
+        # TODO: If scope is Changed: score = min(1.08 × (impact + exploitability), 10)
+        # TODO: Return math.ceil(score * 10) / 10
+        pass
+    
+    def get_severity_rating(self, score: float) -> str:
+        """
+        Get severity rating based on CVSS score.
+        
+        Args:
+            score: CVSS base score
+        
+        Returns:
+            Severity rating string
+        """
+        # TODO: Implement severity rating logic
+        # None: 0.0, Low: 0.1-3.9, Medium: 4.0-6.9, High: 7.0-8.9, Critical: 9.0-10.0
+        pass
+    
+    def create_vector_string(self, vulnerability: Dict) -> str:
+        """
+        Create CVSS vector string.
+        Format: CVSS:3.1/AV:X/AC:X/PR:X/UI:X/S:X/C:X/I:X/A:X
+        
+        Args:
+            vulnerability: Vulnerability dictionary
+        
+        Returns:
+            CVSS vector string
+        """
+        # TODO: Map full metric names to abbreviations
+        # TODO: Construct vector string in proper format
+        pass
+    
+    def calculate_cvss(self, vulnerability: Dict) -> Dict:
+        """
+        Calculate complete CVSS score for a vulnerability.
+        
+        Args:
+            vulnerability: Vulnerability data dictionary
+        
+        Returns:
+            Dictionary with CVSS scores and metrics
+        """
+        # TODO: Extract metric values from vulnerability dict
+        # TODO: Handle PR value based on scope (use PRIVILEGES_REQUIRED_CHANGED if scope is Changed)
+        # TODO: Calculate exploitability, impact, and base scores
+        # TODO: Get severity rating
+        # TODO: Create vector string
+        # TODO: Return complete result dictionary
+        pass
+    
+    def process_vulnerabilities_file(self, filename: str) -> List[Dict]:
+        """
+        Process vulnerabilities from JSON file.
+        
+        Args:
+            filename: Path to JSON file
+        
+        Returns:
+            List of vulnerability results with CVSS scores
+        """
+        # TODO: Load JSON file
+        # TODO: Process each vulnerability
+        # TODO: Return list of results
+        pass
+
+def main():
+    """Main function to test CVSS calculator"""
+    calculator = CVSSCalculator()
+    
+    print("CVSS v3.1 Calculator")
+    print("=" * 50)
+    
+    # TODO: Process sample vulnerabilities file
+    # TODO: Display results sorted by score
+    # TODO: Print summary statistics
+
+if __name__ == "__main__":
+    main()
+Step 2: Test Your Calculator
+Make the script executable:
+
+chmod +x scripts/cvss_calculator.py
+Test with sample data:
+
+cd scripts
+python3 cvss_calculator.py
+Expected output format: ``` CVSS v3.1 Calculator
+Processed VULN-001: 9.8 (Critical) Processed VULN-002: 5.4 (Medium) Processed VULN-003: 7.8 (High)
+
+
+### Step 3: Create Report Generator
+
+Create reporting script:
+
+```bash
+nano scripts/cvss_reporter.py
+Implement report generator (students complete):
+
+#!/usr/bin/env python3
+"""
+CVSS Report Generator
+Students: Complete the TODO sections to generate vulnerability reports
+"""
+
+import json
+from datetime import datetime
+from typing import Dict, List
+from cvss_calculator import CVSSCalculator
+
+class CVSSReporter:
+    """Generate comprehensive CVSS reports"""
+    
+    def __init__(self):
+        self.calculator = CVSSCalculator()
+    
+    def generate_summary_statistics(self, results: List[Dict]) -> Dict:
+        """
+        Generate summary statistics from vulnerability results.
+        
+        Args:
+            results: List of vulnerability results
+        
+        Returns:
+            Dictionary with summary statistics
+        """
+        # TODO: Count vulnerabilities by severity
+        # TODO: Calculate average CVSS score
+        # TODO: Identify highest and lowest scores
+        # TODO: Return summary dictionary
+        pass
+    
+    def generate_recommendations(self, severity_counts: Dict) -> List[str]:
+        """
+        Generate remediation recommendations based on severity distribution.
+        
+        Args:
+            severity_counts: Dictionary of severity counts
+        
+        Returns:
+            List of recommendation strings
+        """
+        # TODO: Generate recommendations based on critical/high counts
+        # TODO: Add general security recommendations
+        # TODO: Return list of recommendations
+        pass
+    
+    def export_json_report(self, results: List[Dict], output_file: str):
+        """
+        Export results to JSON format.
+        
+        Args:
+            results: Vulnerability results
+            output_file: Output file path
+        """
+        # TODO: Create report structure with metadata
+        # TODO: Include summary statistics
+        # TODO: Write to JSON file
+        pass
+    
+    def export_html_report(self, results: List[Dict], output_file: str):
+        """
+        Export results to HTML format.
+        
+        Args:
+            results: Vulnerability results
+            output_file: Output file path
+        """
+        # TODO: Create HTML structure with CSS styling
+        # TODO: Add summary section
+        # TODO: List vulnerabilities sorted by severity
+        # TODO: Write to HTML file
+        pass
+    
+    def export_csv_report(self, results: List[Dict], output_file: str):
+        """
+        Export results to CSV format.
+        
+        Args:
+            results: Vulnerability results
+            output_file: Output file path
+        """
+        # TODO: Define CSV columns
+        # TODO: Write header and data rows
+        # TODO: Save to CSV file
+        pass
+
+def main():
+    """Main function to generate reports"""
+    # TODO: Initialize reporter
+    # TODO: Process vulnerabilities
+    # TODO: Generate reports in multiple formats
+    # TODO: Display summary
+
+if __name__ == "__main__":
+    main()
+Task 3: Generate Vulnerability Reports
+Step 1: Create Additional Test Data
+Create more vulnerability scenarios:
+
+nano vulnerabilities/web_vulnerabilities.json
+Add diverse vulnerability types:
+
+{
+  "vulnerabilities": [
+    {
+      "id": "WEB-001",
+      "name": "Remote Code Execution",
+      "description": "Unauthenticated RCE in file upload",
+      "cve": "CVE-2023-99999",
+      "attack_vector": "Network",
+      "attack_complexity": "Low",
+      "privileges_required": "None",
+      "user_interaction": "None",
+      "scope": "Changed",
+      "confidentiality_impact": "High",
+      "integrity_impact": "High",
+      "availability_impact": "High"
+    },
+    {
+      "id": "WEB-002",
+      "name": "Information Disclosure",
+      "description": "Sensitive data exposure in API",
+      "cve": "CVE-2023-88888",
+      "attack_vector": "Network",
+      "attack_complexity": "Low",
+      "privileges_required": "Low",
+      "user_interaction": "None",
+      "scope": "Unchanged",
+      "confidentiality_impact": "High",
+      "integrity_impact": "None",
+      "availability_impact": "None"
+    }
+  ]
+}
+Step 2: Generate Multiple Report Formats
+Process vulnerabilities and generate reports:
+
+cd scripts
+python3 cvss_reporter.py ../vulnerabilities/sample_vulnerabilities.json -o ../reports/report.json
+python3 cvss_reporter.py ../vulnerabilities/sample_vulnerabilities.json -o ../reports/report.html -f html
+python3 cvss_reporter.py ../vulnerabilities/sample_vulnerabilities.json -o ../reports/report.csv -f csv
+Step 3: Analyze and Prioritize Vulnerabilities
+Create prioritization script:
+
+nano scripts/prioritize_vulns.py
+Implement prioritization logic:
+
+#!/usr/bin/env python3
+"""
+Vulnerability Prioritization Tool
+Students: Complete the TODO sections
+"""
+
+import json
+from typing import List, Dict
+
+def prioritize_vulnerabilities(results: List[Dict]) -> Dict:
+    """
+    Prioritize vulnerabilities based on CVSS scores and other factors.
+    
+    Args:
+        results: List of vulnerability results
+    
+    Returns:
+        Dictionary with prioritized vulnerabilities
+    """
+    # TODO: Sort vulnerabilities by CVSS score (descending)
+    # TODO: Group by severity level
+    # TODO: Calculate remediation timeline based on severity
+    # TODO: Return prioritized structure
+    pass
+
+def calculate_risk_score(results: List[Dict]) -> float:
+    """
+    Calculate overall risk score for the system.
+    
+    Args:
+        results: List of vulnerability results
+    
+    Returns:
+        Overall risk score (0-100)
+    """
+    # TODO: Weight scores by severity (Critical=4, High=3, Medium=2, Low=1)
+    # TODO: Normalize to 0-100 scale
+    # TODO: Return risk score
+    pass
+
+def main():
+    # TODO: Load vulnerability results
+    # TODO: Prioritize vulnerabilities
+    # TODO: Calculate overall risk
+    # TODO: Display prioritized list with remediation timelines
+
+if __name__ == "__main__":
+    main()
+Step 4: Create Executive Summary
+Generate executive summary:
+
+nano reports/executive_summary.txt
+Document findings:
+
+VULNERABILITY ASSESSMENT EXECUTIVE SUMMARY
+==========================================
+Date: [Current Date]
+Assessment Scope: Web Application Security
+
+OVERALL RISK LEVEL: [Calculate from your results]
+
+SUMMARY STATISTICS:
+- Total Vulnerabilities: [Count]
+- Critical: [Count]
+- High: [Count]
+- Medium: [Count]
+- Low: [Count]
+- Average CVSS Score: [Calculate]
+
+TOP PRIORITY VULNERABILITIES:
+1. [Highest scoring vulnerability]
+2. [Second highest]
+3. [Third highest]
+
+IMMEDIATE ACTIONS REQUIRED:
+- [List critical vulnerabilities requiring immediate attention]
+
+RECOMMENDATIONS:
+- [Based on your analysis]
+Expected Outcomes
+After completing this lab, you should have:
+
+Understanding of CVSS Framework:
+
+Knowledge of all CVSS v3.1 metrics
+Ability to manually calculate CVSS scores
+Understanding of severity ratings
+Working CVSS Calculator:
+
+Python script that calculates CVSS scores
+Automated processing of vulnerability data
+Vector string generation
+Comprehensive Reports:
+
+JSON, HTML, and CSV report formats
+Summary statistics and risk assessments
+Prioritized vulnerability lists
+Practical Skills:
+
+Vulnerability assessment documentation
+Risk-based prioritization
+Security reporting for different audiences
+Troubleshooting Tips
+Issue: CVSS scores don't match online calculators
+
+Verify you're using CVSS v3.1 (not v2.0 or v3.0)
+Check that Privileges Required uses correct values for Changed scope
+Ensure proper rounding (ceiling function for final score)
+Issue: JSON parsing errors
+
+Validate JSON syntax using python3 -m json.tool file.json
+Check for missing commas or quotes
+Ensure proper UTF-8 encoding
+Issue: Import errors in Python scripts
+
+Verify scripts are in correct directory
+Use relative imports or add to PYTHONPATH
+Check file permissions with ls -l
+Issue: Incorrect severity ratings
+
+Review severity thresholds (Critical: 9.0-10.0, High: 7.0-8.9, etc.)
+Verify base score calculation before severity assignment
+Check for off-by-one errors in range comparisons
+Conclusion
+This lab provided hands-on experience with the CVSS v3.1 framework for vulnerability scoring and prioritization. You learned to manually calculate CVSS scores, automate the process with Python, and generate professional vulnerability reports. These skills are essential for vulnerability management, security assessments, and communicating risk to stakeholders.
+
+Key takeaways:
+
+CVSS provides standardized vulnerability severity ratings
+Automation improves efficiency and consistency in vulnerability assessment
+Proper documentation and prioritization enable effective remediation
+Different report formats serve different audiences (technical vs. executive)
+Continue practicing by scoring real-world vulnerabilities from CVE databases and refining your reporting templates for your organization's needs.
