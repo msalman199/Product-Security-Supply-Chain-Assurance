@@ -1,0 +1,528 @@
+ Reverse-Engineer Undocumented Protocols
+Objectives
+By the end of this lab, students will be able to:
+
+Capture and analyze network traffic containing custom protocols
+Apply reverse engineering techniques to identify protocol structure
+Detect security vulnerabilities in proprietary protocols
+Automate protocol analysis using Python and Scapy
+Document protocol specifications based on traffic analysis
+Prerequisites
+Before starting this lab, students should have:
+
+Basic understanding of TCP/IP and network protocols
+Familiarity with Python programming
+Knowledge of packet capture concepts
+Linux command line experience
+Lab Environment
+Al Nafi provides Linux-based cloud machines with all necessary tools pre-installed. Simply click Start Lab to access your dedicated environment. No additional VM setup required.
+
+Task 1: Capture Traffic from a Custom Protocol
+Step 1: Create Protocol Server
+Create a directory and server script that implements a custom protocol:
+
+mkdir ~/protocol_lab && cd ~/protocol_lab
+Create custom_server.py:
+
+#!/usr/bin/env python3
+import socket
+import struct
+import threading
+
+class CustomProtocolServer:
+    def __init__(self, host='127.0.0.1', port=8888):
+        self.host = host
+        self.port = port
+        
+    def create_message(self, msg_type, data):
+        """
+        Create a custom protocol message.
+        Protocol format: [MAGIC(4)][VERSION(1)][TYPE(1)][LENGTH(2)][DATA][CHECKSUM(1)]
+        
+        TODO: Implement message creation with proper field packing
+        TODO: Calculate checksum as sum of data bytes % 256
+        """
+        pass
+    
+    def handle_client(self, client_socket, addr):
+        """
+        TODO: Send welcome message (type 1)
+        TODO: Send status message (type 2) 
+        TODO: Send data message (type 3) with flag
+        TODO: Implement proper error handling
+        """
+        pass
+    
+    def start(self):
+        """
+        TODO: Bind socket and listen for connections
+        TODO: Accept clients and spawn handler threads
+        """
+        pass
+
+if __name__ == "__main__":
+    server = CustomProtocolServer()
+    server.start()
+Step 2: Create Protocol Client
+Create custom_client.py:
+
+#!/usr/bin/env python3
+import socket
+
+def connect_to_server():
+    """
+    TODO: Connect to server on localhost:8888
+    TODO: Receive and display messages
+    TODO: Handle connection errors gracefully
+    """
+    pass
+
+if __name__ == "__main__":
+    connect_to_server()
+Step 3: Capture Network Traffic
+Start the server and capture traffic:
+
+# Start server in background
+python3 custom_server.py &
+SERVER_PID=$!
+
+# Start packet capture
+sudo tcpdump -i lo -w protocol_capture.pcap port 8888 &
+TCPDUMP_PID=$!
+
+# Run client for 30 seconds
+timeout 30 python3 custom_client.py
+
+# Stop capture and server
+sudo kill $TCPDUMP_PID
+kill $SERVER_PID
+Step 4: Initial Traffic Inspection
+Examine captured packets:
+
+# View packet summary
+tcpdump -r protocol_capture.pcap -n
+
+# View hex dump of first 5 packets
+tcpdump -r protocol_capture.pcap -X -c 5
+Task 2: Reverse-Engineer Protocol Structure
+Step 1: Extract and Analyze Payloads
+Create protocol_analyzer.py:
+
+#!/usr/bin/env python3
+from scapy.all import *
+import struct
+
+class ProtocolAnalyzer:
+    def __init__(self, pcap_file):
+        self.pcap_file = pcap_file
+        self.packets = []
+        
+    def load_packets(self):
+        """
+        TODO: Load packets from PCAP file using rdpcap()
+        TODO: Filter for TCP packets with Raw payload
+        """
+        pass
+    
+    def extract_payloads(self):
+        """
+        TODO: Extract TCP payload data from packets
+        TODO: Return list of payload byte strings
+        """
+        pass
+    
+    def analyze_structure(self, payloads):
+        """
+        TODO: Identify common patterns in first bytes (magic)
+        TODO: Analyze payload length distribution
+        TODO: Look for fixed-position fields
+        TODO: Print hex and ASCII representation
+        """
+        pass
+    
+    def identify_fields(self, payload):
+        """
+        TODO: Parse potential magic bytes (first 4 bytes)
+        TODO: Extract version field (byte 5)
+        TODO: Extract message type (byte 6)
+        TODO: Parse length field (bytes 7-8, big-endian)
+        TODO: Extract data based on length field
+        TODO: Identify checksum (last byte)
+        """
+        pass
+
+if __name__ == "__main__":
+    analyzer = ProtocolAnalyzer("protocol_capture.pcap")
+    analyzer.load_packets()
+    payloads = analyzer.extract_payloads()
+    analyzer.analyze_structure(payloads)
+Step 2: Create Protocol Dissector
+Create protocol_dissector.py:
+
+#!/usr/bin/env python3
+import struct
+
+class ProtocolDissector:
+    def __init__(self):
+        self.message_types = {
+            1: "WELCOME",
+            2: "STATUS",
+            3: "DATA"
+        }
+    
+    def dissect_message(self, payload):
+        """
+        Dissect a protocol message into its components.
+        
+        Returns dict with fields:
+        - magic: 4-byte identifier
+        - version: protocol version
+        - type: message type code
+        - type_name: human-readable type
+        - length: data length
+        - data: message data
+        - checksum: integrity check value
+        - checksum_valid: boolean validation result
+        
+        TODO: Implement field extraction
+        TODO: Validate checksum (sum of data bytes % 256)
+        TODO: Handle parsing errors
+        """
+        pass
+    
+    def analyze_all_messages(self, payloads):
+        """
+        TODO: Dissect all payloads
+        TODO: Count message types
+        TODO: Identify patterns and anomalies
+        """
+        pass
+
+if __name__ == "__main__":
+    # TODO: Load payloads and analyze
+    pass
+Step 3: Document Protocol Specification
+Create protocol_spec.py:
+
+#!/usr/bin/env python3
+import json
+
+def generate_protocol_documentation(analysis_results):
+    """
+    Generate protocol specification document.
+    
+    TODO: Document field structure and sizes
+    TODO: List message types and meanings
+    TODO: Describe checksum algorithm
+    TODO: Note protocol version information
+    TODO: Save as JSON file
+    """
+    spec = {
+        "protocol_name": "Custom Protocol",
+        "version": "1.0",
+        "fields": [
+            # TODO: Add field specifications
+        ],
+        "message_types": {
+            # TODO: Add message type definitions
+        },
+        "security_notes": [
+            # TODO: Add security observations
+        ]
+    }
+    
+    with open("protocol_spec.json", "w") as f:
+        json.dump(spec, f, indent=2)
+    
+    return spec
+Task 3: Identify Security Vulnerabilities
+Step 1: Automated Vulnerability Scanner
+Create vulnerability_scanner.py:
+
+#!/usr/bin/env python3
+from scapy.all import *
+import math
+
+class VulnerabilityScanner:
+    def __init__(self, pcap_file):
+        self.pcap_file = pcap_file
+        self.vulnerabilities = []
+    
+    def calculate_entropy(self, data):
+        """
+        Calculate Shannon entropy to detect encryption.
+        
+        TODO: Count byte frequencies
+        TODO: Calculate probability distribution
+        TODO: Compute entropy: -sum(p * log2(p))
+        TODO: Return entropy score (0-8)
+        """
+        pass
+    
+    def check_information_disclosure(self, payload):
+        """
+        TODO: Search for sensitive keywords (password, secret, key, flag)
+        TODO: Check for plaintext credentials
+        TODO: Identify exposed internal data
+        """
+        pass
+    
+    def check_weak_authentication(self, payload):
+        """
+        TODO: Identify predictable magic bytes
+        TODO: Check for missing authentication fields
+        TODO: Detect replay attack vulnerabilities
+        """
+        pass
+    
+    def check_integrity_protection(self, payload):
+        """
+        TODO: Analyze checksum strength
+        TODO: Test for collision resistance
+        TODO: Verify checksum validation
+        """
+        pass
+    
+    def check_buffer_overflow_risk(self, payload):
+        """
+        TODO: Identify oversized payloads
+        TODO: Check length field validation
+        TODO: Detect potential buffer overflows
+        """
+        pass
+    
+    def scan_all_vulnerabilities(self):
+        """
+        TODO: Load packets from PCAP
+        TODO: Run all vulnerability checks
+        TODO: Categorize by severity (Critical, High, Medium, Low)
+        TODO: Generate vulnerability report
+        """
+        pass
+    
+    def generate_report(self):
+        """
+        TODO: Create formatted vulnerability report
+        TODO: Include remediation recommendations
+        TODO: Save to file
+        """
+        pass
+
+if __name__ == "__main__":
+    scanner = VulnerabilityScanner("protocol_capture.pcap")
+    scanner.scan_all_vulnerabilities()
+    scanner.generate_report()
+Step 2: Exploit Proof-of-Concept
+Create exploit_poc.py:
+
+#!/usr/bin/env python3
+import socket
+import struct
+
+class ProtocolExploit:
+    def __init__(self, target_host='127.0.0.1', target_port=8888):
+        self.target_host = target_host
+        self.target_port = target_port
+    
+    def craft_malicious_packet(self):
+        """
+        Craft a packet to test vulnerabilities.
+        
+        TODO: Create packet with invalid checksum
+        TODO: Test with oversized length field
+        TODO: Try buffer overflow payload
+        TODO: Test replay attack
+        """
+        pass
+    
+    def test_checksum_bypass(self):
+        """
+        TODO: Send packet with incorrect checksum
+        TODO: Verify if server validates integrity
+        """
+        pass
+    
+    def test_buffer_overflow(self):
+        """
+        TODO: Send oversized payload
+        TODO: Monitor server response
+        """
+        pass
+    
+    def run_exploit_tests(self):
+        """
+        TODO: Execute all exploit tests
+        TODO: Document successful exploits
+        TODO: Record server behavior
+        """
+        pass
+
+# WARNING: Only run against authorized test systems
+if __name__ == "__main__":
+    print("Exploit testing - authorized systems only")
+    # TODO: Implement safe testing framework
+Task 4: Automate Analysis with Scapy
+Step 1: Create Automated Analysis Tool
+Create automated_analyzer.py:
+
+#!/usr/bin/env python3
+from scapy.all import *
+from collections import defaultdict
+import json
+
+class AutomatedProtocolAnalyzer:
+    def __init__(self, pcap_file):
+        self.pcap_file = pcap_file
+        self.results = {
+            "patterns": {},
+            "vulnerabilities": [],
+            "statistics": {}
+        }
+    
+    def extract_patterns(self):
+        """
+        TODO: Identify common byte sequences
+        TODO: Find repeating patterns
+        TODO: Detect protocol signatures
+        TODO: Calculate pattern frequencies
+        """
+        pass
+    
+    def statistical_analysis(self):
+        """
+        TODO: Calculate payload length statistics (min, max, avg)
+        TODO: Compute entropy distribution
+        TODO: Analyze timing patterns
+        TODO: Identify protocol behavior patterns
+        """
+        pass
+    
+    def generate_protocol_signature(self):
+        """
+        TODO: Create unique protocol fingerprint
+        TODO: Hash common characteristics
+        TODO: Generate detection rules
+        """
+        pass
+    
+    def export_results(self, output_file="analysis_results.json"):
+        """
+        TODO: Format analysis results
+        TODO: Include all findings
+        TODO: Save to JSON file
+        """
+        pass
+    
+    def run_full_analysis(self):
+        """
+        TODO: Execute all analysis functions
+        TODO: Compile comprehensive report
+        TODO: Generate actionable insights
+        """
+        pass
+
+if __name__ == "__main__":
+    analyzer = AutomatedProtocolAnalyzer("protocol_capture.pcap")
+    analyzer.run_full_analysis()
+    analyzer.export_results()
+Step 2: Create Protocol Fuzzer
+Create protocol_fuzzer.py:
+
+#!/usr/bin/env python3
+import socket
+import random
+import struct
+
+class ProtocolFuzzer:
+    def __init__(self, target_host='127.0.0.1', target_port=8888):
+        self.target_host = target_host
+        self.target_port = target_port
+        self.crash_cases = []
+    
+    def fuzz_magic_bytes(self):
+        """
+        TODO: Generate random magic byte variations
+        TODO: Test server response to invalid magic
+        """
+        pass
+    
+    def fuzz_length_field(self):
+        """
+        TODO: Send mismatched length values
+        TODO: Test with negative lengths
+        TODO: Try maximum integer values
+        """
+        pass
+    
+    def fuzz_data_field(self):
+        """
+        TODO: Send random data patterns
+        TODO: Test special characters
+        TODO: Try format string attacks
+        """
+        pass
+    
+    def monitor_server_response(self, test_case):
+        """
+        TODO: Send fuzzed packet
+        TODO: Monitor for crashes or errors
+        TODO: Record anomalous behavior
+        """
+        pass
+    
+    def run_fuzzing_campaign(self, iterations=1000):
+        """
+        TODO: Execute fuzzing tests
+        TODO: Track successful exploits
+        TODO: Generate fuzzing report
+        """
+        pass
+
+# WARNING: Only fuzz authorized test systems
+if __name__ == "__main__":
+    fuzzer = ProtocolFuzzer()
+    # TODO: Implement safe fuzzing with proper authorization
+Expected Outcomes
+After completing this lab, you should have:
+
+Captured network traffic containing a custom protocol
+Reverse-engineered the protocol structure and field layout
+Identified multiple security vulnerabilities including:
+Information disclosure (plaintext secrets)
+Weak integrity protection (simple checksum)
+Predictable protocol identifiers
+Missing encryption
+Created automated analysis tools using Python and Scapy
+Documented the complete protocol specification
+Developed proof-of-concept exploits for identified vulnerabilities
+Troubleshooting Tips
+Issue: No packets captured in PCAP file
+
+Solution: Ensure server and client are running during capture
+Verify correct interface (use lo for localhost traffic)
+Check tcpdump has proper permissions (use sudo)
+Issue: Scapy import errors
+
+Solution: Install Scapy with pip3 install scapy
+May need to install libpcap-dev: sudo apt-get install libpcap-dev
+Issue: Cannot parse protocol fields correctly
+
+Solution: Verify byte order (big-endian vs little-endian)
+Check struct format strings match protocol specification
+Use hex dumps to manually verify field positions
+Issue: Server crashes during fuzzing
+
+Solution: This may indicate a vulnerability - document the crash case
+Implement proper error handling in server code
+Use try-except blocks to catch parsing errors
+Conclusion
+This lab demonstrated practical reverse engineering techniques for undocumented network protocols. You learned to capture traffic, identify protocol structure through pattern analysis, detect security vulnerabilities, and automate analysis using Python and Scapy. These skills are essential for security researchers analyzing proprietary protocols, IoT devices, and custom network applications.
+
+Key takeaways:
+
+Protocol reverse engineering requires systematic analysis of traffic patterns
+Security vulnerabilities often exist in custom protocols due to lack of peer review
+Automation tools significantly improve analysis efficiency
+Proper documentation is crucial for understanding protocol behavior
+Always obtain authorization before testing real-world systems
+Continue practicing these techniques on CTF challenges and authorized penetration testing engagements to develop expertise in protocol analysis and security assessment.
