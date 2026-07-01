@@ -1,0 +1,443 @@
+Detect Protocol Weaknesses with Crafted Packet Tests
+Objectives
+By the end of this lab, students will be able to:
+
+Craft custom network packets using Scapy to test protocol implementations
+Identify common protocol vulnerabilities through systematic testing
+Automate protocol security testing with Python scripts
+Analyze protocol responses to detect security weaknesses
+Document and report discovered vulnerabilities
+Prerequisites
+Basic understanding of TCP/IP networking and the OSI model
+Familiarity with Python programming (functions, loops, error handling)
+Basic Linux command line skills
+Understanding of network packet structure
+Lab Environment
+Al Nafi provides pre-configured Linux cloud machines. Click Start Lab to access your environment with:
+
+Ubuntu 22.04 LTS
+Python 3.10+
+Scapy library pre-installed
+Network utilities (tcpdump, netcat)
+Task 1: Set Up Test Environment and Create Target Protocol
+Step 1: Verify Environment Setup
+Check that required tools are installed:
+
+# Verify Python and Scapy
+python3 --version
+python3 -c "from scapy.all import *; print('Scapy ready')"
+
+# Install additional dependencies if needed
+pip3 install colorama tabulate
+Step 2: Create a Vulnerable Protocol Server
+Create protocol_server.py - a simple server with intentional vulnerabilities for testing:
+
+#!/usr/bin/env python3
+import socket
+import threading
+import struct
+
+class VulnerableProtocolServer:
+    """
+    A deliberately vulnerable protocol server for testing.
+    Protocol format: [Magic:2][Version:2][Command:2][Length:2][Payload:N]
+    """
+    
+    def __init__(self, host='127.0.0.1', port=8888):
+        self.host = host
+        self.port = port
+        
+    def handle_client(self, client_socket, address):
+        """
+        Handle incoming client connections.
+        
+        TODO: Implement packet reception (1024 bytes)
+        TODO: Parse header using struct.unpack('!HHHH', data[:8])
+        TODO: Implement command handlers:
+              - Command 1: Echo payload back
+              - Command 2: Return "STATUS_OK"
+              - Command 999: Return admin credentials (vulnerability)
+        TODO: Handle invalid magic numbers (should be 0xDEAD)
+        TODO: Check for buffer overflow when length > 1000
+        """
+        pass
+        
+    def start(self):
+        """
+        Start the server and listen for connections.
+        
+        TODO: Create TCP socket
+        TODO: Bind to host:port
+        TODO: Listen for connections
+        TODO: Accept clients in loop and spawn threads
+        """
+        pass
+
+if __name__ == "__main__":
+    # TODO: Create server instance and start
+    pass
+Implementation Hints:
+
+Use socket.socket(socket.AF_INET, socket.SOCK_STREAM) for TCP
+Valid magic number is 0xDEAD, response magic is 0xBEEF
+Command 999 should leak sensitive information (intentional vulnerability)
+Test buffer overflow when length field exceeds 1000
+Step 3: Start the Test Server
+Run your server in a separate terminal:
+
+python3 protocol_server.py
+Keep this running throughout the lab.
+
+Task 2: Craft Packets to Test Protocol Weaknesses
+Step 1: Create Basic Packet Crafter
+Create packet_crafter.py:
+
+#!/usr/bin/env python3
+from scapy.all import *
+import struct
+import socket
+from colorama import Fore, Style, init
+
+init()
+
+class ProtocolTester:
+    """Test suite for proprietary protocol vulnerability assessment."""
+    
+    def __init__(self, target_ip='127.0.0.1', target_port=8888):
+        self.target_ip = target_ip
+        self.target_port = target_port
+        self.results = []
+        
+    def craft_packet(self, magic=0xDEAD, version=1, command=1, payload=b"test"):
+        """
+        Craft a protocol packet with specified parameters.
+        
+        Args:
+            magic: Protocol magic number (2 bytes)
+            version: Protocol version (2 bytes)
+            command: Command code (2 bytes)
+            payload: Payload data (bytes)
+            
+        Returns:
+            Complete packet as bytes
+            
+        TODO: Pack header using struct.pack('!HHHH', ...)
+        TODO: Calculate payload length
+        TODO: Concatenate header + payload
+        TODO: Return complete packet
+        """
+        pass
+    
+    def send_packet(self, packet):
+        """
+        Send packet via TCP and receive response.
+        
+        TODO: Create TCP socket
+        TODO: Connect to target
+        TODO: Send packet
+        TODO: Receive response (up to 4096 bytes)
+        TODO: Close socket
+        TODO: Return response
+        """
+        pass
+    
+    def test_valid_commands(self):
+        """
+        Test standard protocol commands.
+        
+        TODO: Test command 1 (echo) with payload "Hello"
+        TODO: Test command 2 (status) with empty payload
+        TODO: Test command 3 (invalid) to see error handling
+        TODO: Print results for each test
+        """
+        pass
+    
+    def test_invalid_magic(self):
+        """
+        Test protocol behavior with invalid magic numbers.
+        
+        TODO: Test with magic numbers: 0x0000, 0xFFFF, 0x1234
+        TODO: Check if server validates magic number
+        TODO: Document responses
+        """
+        pass
+
+if __name__ == "__main__":
+    # TODO: Create tester instance
+    # TODO: Run test_valid_commands()
+    # TODO: Run test_invalid_magic()
+    pass
+Step 2: Test Basic Protocol Functionality
+Run your packet crafter:
+
+python3 packet_crafter.py
+Expected observations:
+
+Valid commands should return proper responses
+Invalid magic numbers should be rejected
+Response format should match protocol specification
+Step 3: Implement Vulnerability Tests
+Add vulnerability detection methods to your ProtocolTester class:
+
+def test_authentication_bypass(self):
+    """
+    Scan for hidden administrative commands.
+    
+    TODO: Loop through command numbers 990-1000
+    TODO: Send packets with each command number
+    TODO: Check responses for keywords: "ADMIN", "password", "root"
+    TODO: Flag any commands that leak sensitive information
+    """
+    pass
+
+def test_buffer_overflow(self):
+    """
+    Test for buffer overflow vulnerabilities.
+    
+    TODO: Create packet with length field = 2000
+    TODO: Create packet with actual payload of 100 bytes
+    TODO: Send mismatched length/payload packet
+    TODO: Check if server crashes or returns error
+    """
+    pass
+
+def test_command_injection(self):
+    """
+    Test for command injection vulnerabilities.
+    
+    TODO: Create payloads with shell metacharacters:
+          - "; ls -la"
+          - "| whoami"
+          - "&& cat /etc/passwd"
+    TODO: Send each payload in command 1 (echo)
+    TODO: Check if responses contain command output
+    """
+    pass
+Task 3: Automate Protocol Security Testing
+Step 1: Create Automated Testing Framework
+Create automated_scanner.py:
+
+#!/usr/bin/env python3
+import struct
+import socket
+import time
+import json
+from datetime import datetime
+from tabulate import tabulate
+
+class AutomatedProtocolScanner:
+    """
+    Comprehensive automated protocol vulnerability scanner.
+    """
+    
+    def __init__(self, target_ip='127.0.0.1', target_port=8888):
+        self.target_ip = target_ip
+        self.target_port = target_port
+        self.vulnerabilities = []
+        self.test_results = []
+        
+    def load_test_config(self, config_file='test_config.json'):
+        """
+        Load test configuration from JSON file.
+        
+        TODO: Read JSON configuration file
+        TODO: Parse test parameters
+        TODO: Return configuration dictionary
+        """
+        pass
+    
+    def run_test_suite(self, test_config):
+        """
+        Execute complete test suite based on configuration.
+        
+        TODO: Iterate through enabled tests in config
+        TODO: Execute each test method
+        TODO: Collect results
+        TODO: Generate summary report
+        """
+        pass
+    
+    def fuzz_protocol(self, iterations=100):
+        """
+        Perform protocol fuzzing with random inputs.
+        
+        TODO: Generate random magic numbers
+        TODO: Generate random command numbers
+        TODO: Generate random payload sizes
+        TODO: Send fuzzed packets and monitor responses
+        TODO: Detect crashes or unexpected behavior
+        """
+        pass
+    
+    def generate_report(self):
+        """
+        Generate comprehensive vulnerability report.
+        
+        TODO: Summarize all vulnerabilities found
+        TODO: Categorize by severity (Critical/High/Medium/Low)
+        TODO: Include test statistics
+        TODO: Format as table using tabulate
+        TODO: Save to JSON file
+        """
+        pass
+
+if __name__ == "__main__":
+    # TODO: Create scanner instance
+    # TODO: Load configuration
+    # TODO: Run test suite
+    # TODO: Generate report
+    pass
+Step 2: Create Test Configuration File
+Create test_config.json:
+
+{
+  "tests": {
+    "basic_functionality": true,
+    "authentication_bypass": true,
+    "buffer_overflow": true,
+    "command_injection": true,
+    "protocol_fuzzing": true
+  },
+  "payloads": {
+    "command_injection": [
+      "; ls -la",
+      "| whoami",
+      "&& cat /etc/passwd"
+    ],
+    "buffer_sizes": [100, 1000, 5000, 10000],
+    "command_range": [1, 1000]
+  },
+  "timeouts": {
+    "default": 5,
+    "fuzzing": 2
+  }
+}
+Step 3: Implement Traffic Analysis
+Create traffic_analyzer.py:
+
+#!/usr/bin/env python3
+from scapy.all import *
+import struct
+
+class ProtocolTrafficAnalyzer:
+    """
+    Capture and analyze protocol traffic using Scapy.
+    """
+    
+    def __init__(self, interface='lo', target_port=8888):
+        self.interface = interface
+        self.target_port = target_port
+        self.packets = []
+        
+    def packet_callback(self, packet):
+        """
+        Process each captured packet.
+        
+        TODO: Check if packet has TCP layer
+        TODO: Filter for target port
+        TODO: Extract payload if present
+        TODO: Parse protocol header
+        TODO: Store packet information
+        """
+        pass
+    
+    def start_capture(self, duration=30):
+        """
+        Start packet capture for specified duration.
+        
+        TODO: Use scapy.sniff() with:
+              - iface=self.interface
+              - filter=f"tcp port {self.target_port}"
+              - prn=self.packet_callback
+              - timeout=duration
+        """
+        pass
+    
+    def analyze_patterns(self):
+        """
+        Analyze captured traffic for patterns and anomalies.
+        
+        TODO: Count command frequencies
+        TODO: Identify unusual magic numbers
+        TODO: Calculate payload size statistics
+        TODO: Detect potential attacks in traffic
+        """
+        pass
+
+if __name__ == "__main__":
+    # TODO: Create analyzer
+    # TODO: Start capture
+    # TODO: Analyze patterns
+    # TODO: Print report
+    pass
+Step 4: Run Complete Test Suite
+Execute your automated scanner:
+
+# Run scanner
+python3 automated_scanner.py
+
+# In another terminal, capture traffic
+sudo python3 traffic_analyzer.py
+Expected Outcomes
+After completing this lab, you should have:
+
+Identified vulnerabilities:
+
+Hidden administrative command (999) leaking credentials
+Buffer overflow condition when length > 1000
+Lack of input validation on magic numbers
+Created testing tools:
+
+Basic packet crafter for manual testing
+Automated vulnerability scanner
+Traffic analysis tool
+Generated reports:
+
+List of discovered vulnerabilities with severity ratings
+Test execution statistics
+Traffic pattern analysis
+Learned techniques:
+
+Protocol reverse engineering through packet crafting
+Systematic vulnerability assessment methodology
+Automated security testing with Python and Scapy
+Troubleshooting Tips
+Issue: "Permission denied" when running Scapy
+
+Solution: Run with sudo or add user to appropriate group
+Alternative: Use conf.L3socket=L3RawSocket for non-root operation
+Issue: Server not responding to packets
+
+Check server is running: netstat -tlnp | grep 8888
+Verify firewall rules: sudo iptables -L
+Test connectivity: nc -zv 127.0.0.1 8888
+Issue: Packets not captured by traffic analyzer
+
+Use correct interface: ip link show to list interfaces
+Check capture filter syntax
+Run with sudo for packet capture permissions
+Issue: Struct unpacking errors
+
+Verify packet length before unpacking: if len(data) >= 8:
+Use correct format string: !HHHH for network byte order
+Handle exceptions with try/except blocks
+Conclusion
+This lab demonstrated practical protocol security testing using packet crafting techniques. You learned to:
+
+Systematically test protocol implementations for vulnerabilities
+Automate security testing with Python and Scapy
+Identify common weaknesses like authentication bypass and buffer overflows
+Analyze network traffic to understand protocol behavior
+Key takeaways:
+
+Always validate input on both client and server sides
+Hidden functionality (like command 999) creates security risks
+Automated testing reveals vulnerabilities faster than manual testing
+Protocol security requires defense in depth
+Next steps:
+
+Apply these techniques to real-world protocol testing
+Expand test coverage with additional vulnerability checks
+Integrate with CI/CD pipelines for continuous security testing
+Study secure protocol design principles to prevent vulnerabilities
+Remember: Only test protocols you have permission to assess. Unauthorized testing is illegal and unethical.
