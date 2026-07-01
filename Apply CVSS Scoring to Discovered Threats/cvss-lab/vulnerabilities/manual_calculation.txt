@@ -1,0 +1,18 @@
+CVSS v3.1 Manual Calculation - VULN-001
+========================================
+
+Metric Values:
+- AV: Network = 0.85
+- AC: Low = 0.77
+- PR: None = 0.85
+- UI: None = 0.85
+- S: Unchanged
+- C: High = 0.56
+- I: High = 0.56
+- A: High = 0.56
+
+Exploitability = 8.22 × AV × AC × PR × UI
+Impact (Unchanged) = 6.42 × (1 - [(1-C) × (1-I) × (1-A)])
+Base Score = Roundup(min(Impact + Exploitability, 10))
+
+Calculate the final score and severity rating.
