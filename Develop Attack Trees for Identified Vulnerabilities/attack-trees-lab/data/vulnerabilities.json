@@ -1,0 +1,38 @@
+{
+  "web_application": {
+    "vulnerabilities": [
+      {
+        "id": "VULN-001",
+        "type": "SQL Injection",
+        "severity": "High",
+        "location": "Login form",
+        "cvss_score": 8.5
+      },
+      {
+        "id": "VULN-002",
+        "type": "Cross-Site Scripting",
+        "severity": "Medium",
+        "location": "Comment section",
+        "cvss_score": 6.1
+      },
+      {
+        "id": "VULN-003",
+        "type": "Weak Authentication",
+        "severity": "High",
+        "location": "Password policy",
+        "cvss_score": 7.8
+      }
+    ]
+  },
+  "network": {
+    "vulnerabilities": [
+      {
+        "id": "VULN-004",
+        "type": "Unencrypted Communication",
+        "severity": "High",
+        "location": "Database connection",
+        "cvss_score": 7.5
+      }
+    ]
+  }
+}
