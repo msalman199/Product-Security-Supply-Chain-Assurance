@@ -1,0 +1,507 @@
+Build Custom Scapy Layers for Proprietary Protocols
+Objectives
+By the end of this lab, students will be able to:
+
+Design and implement custom Scapy protocol layers with proper field definitions
+Create packet structures for proprietary network protocols
+Test custom protocol implementations using packet capture and analysis
+Validate protocol behavior and identify anomalies in custom packets
+Apply custom layers in network security testing scenarios
+Prerequisites
+Before starting this lab, students should have:
+
+Basic Python programming knowledge
+Understanding of network protocols (TCP/IP, UDP)
+Familiarity with packet structure concepts
+Basic Linux command line skills
+Lab Environment
+Al Nafi provides Linux-based cloud machines for this lab. Click Start Lab to access your pre-configured environment.
+
+Your lab machine includes:
+
+Ubuntu 22.04 LTS with Python 3.10+
+Scapy library pre-installed
+Wireshark for packet analysis
+All necessary development tools
+Task 1: Understand Scapy Layer Architecture
+Step 1: Explore Existing Scapy Layers
+Create a script to examine how Scapy layers are structured:
+
+# File: explore_layers.py
+#!/usr/bin/env python3
+
+from scapy.all import *
+from scapy.fields import *
+from scapy.packet import Packet
+
+def explore_tcp_layer():
+    """
+    Explore the TCP layer structure to understand Scapy's architecture.
+    
+    TODO: Create a TCP packet and display its structure
+    TODO: Iterate through fields_desc and print field names and types
+    TODO: Create a sample IP/TCP packet and show its layers
+    """
+    pass
+
+def explore_field_types():
+    """
+    Examine different Scapy field types.
+    
+    TODO: Create examples of ByteField, IntField, ShortField
+    TODO: Show how XIntField displays hex values
+    TODO: Demonstrate StrField and StrFixedLenField
+    """
+    pass
+
+if __name__ == "__main__":
+    explore_tcp_layer()
+    explore_field_types()
+Run the script:
+
+cd ~/
+sudo python3 explore_layers.py
+Step 2: Understand Field Types
+Key Scapy field types you'll use:
+
+ByteField: 1-byte integer (0-255)
+ShortField: 2-byte integer
+IntField: 4-byte integer
+XIntField/XShortField: Hex display variants
+StrField: Variable-length string
+StrFixedLenField: Fixed-length string
+ByteEnumField: Byte with enumerated values
+Task 2: Create a Custom Protocol Layer
+Step 1: Design the Protocol Structure
+Create a custom protocol called SecureComm with the following structure:
+
+Magic Number (4 bytes): 0x53434D4D ("SCMM")
+Version (1 byte): Protocol version
+Message Type (1 byte): Command type
+Sequence Number (4 bytes): Packet sequence
+Payload Length (2 bytes): Data length
+Checksum (2 bytes): Integrity check
+Step 2: Implement the Custom Layer
+# File: secure_comm_protocol.py
+#!/usr/bin/env python3
+
+from scapy.all import *
+from scapy.fields import *
+from scapy.packet import Packet
+import struct
+
+class SecureCommHeader(Packet):
+    """
+    Custom SecureComm Protocol Layer
+    
+    TODO: Define the protocol name
+    TODO: Create fields_desc list with all protocol fields
+    TODO: Use appropriate field types for each field
+    TODO: Implement ByteEnumField for msg_type with values:
+          1: "HELLO", 2: "DATA", 3: "ACK", 4: "CLOSE"
+    """
+    
+    name = "SecureComm"
+    
+    fields_desc = [
+        # TODO: Add XIntField for magic number (default 0x53434D4D)
+        # TODO: Add ByteField for version (default 1)
+        # TODO: Add ByteEnumField for msg_type
+        # TODO: Add IntField for sequence
+        # TODO: Add ShortField for payload_len
+        # TODO: Add XShortField for checksum
+    ]
+    
+    def post_build(self, pkt, pay):
+        """
+        Calculate payload length and checksum after packet construction.
+        
+        TODO: Update payload_len if it's 0 and payload exists
+        TODO: Calculate checksum as sum of all bytes & 0xFFFF
+        TODO: Return modified packet + payload
+        """
+        # TODO: Implement post-build logic
+        return pkt + pay
+
+# TODO: Bind the layer to UDP port 9999
+# bind_layers(UDP, SecureCommHeader, dport=9999)
+
+def test_protocol():
+    """
+    Test the SecureComm protocol implementation.
+    
+    TODO: Create HELLO packet with msg_type=1
+    TODO: Create DATA packet with msg_type=2
+    TODO: Display both packets using show()
+    TODO: Send packets to localhost:9999
+    """
+    pass
+
+if __name__ == "__main__":
+    test_protocol()
+Step 3: Test Basic Functionality
+sudo python3 secure_comm_protocol.py
+Task 3: Create an Advanced Authentication Protocol
+Step 1: Design AuthProtocol Structure
+Create a more complex protocol with:
+
+Magic Number (4 bytes): 0x41555448 ("AUTH")
+Version (1 byte)
+Command (1 byte): AUTH_REQUEST, AUTH_RESPONSE, SESSION_DATA, LOGOUT
+Flags (1 byte): Protocol flags
+Session ID (4 bytes)
+Timestamp (4 bytes): Unix timestamp
+Token (16 bytes): Authentication token
+Data Length (2 bytes)
+CRC (2 bytes): Checksum
+Step 2: Implement AuthProtocol
+# File: auth_protocol.py
+#!/usr/bin/env python3
+
+from scapy.all import *
+from scapy.fields import *
+from scapy.packet import Packet
+import time
+import hashlib
+
+class AuthProtocolHeader(Packet):
+    """
+    Advanced Authentication Protocol
+    
+    TODO: Define protocol name as "AuthProtocol"
+    TODO: Create fields_desc with all required fields
+    TODO: Use StrFixedLenField for 16-byte token
+    TODO: Implement command enumeration
+    """
+    
+    name = "AuthProtocol"
+    
+    fields_desc = [
+        # TODO: Add all protocol fields
+    ]
+    
+    def post_build(self, pkt, pay):
+        """
+        Post-build processing for timestamps and CRC.
+        
+        TODO: Set timestamp to current time if 0
+        TODO: Update data_len based on payload
+        TODO: Calculate CRC using zlib.crc32
+        """
+        pass
+
+class AuthData(Packet):
+    """
+    Authentication data payload
+    
+    TODO: Define fields for username, password, client_id
+    TODO: Use FieldLenField and StrLenField for variable-length strings
+    """
+    
+    name = "AuthData"
+    
+    fields_desc = [
+        # TODO: Add username_len and username fields
+        # TODO: Add password_len and password fields
+        # TODO: Add client_id field
+    ]
+
+# TODO: Bind to TCP port 8888
+# TODO: Bind AuthData to AuthProtocolHeader when cmd=1
+
+def create_auth_session():
+    """
+    Create authentication session packets.
+    
+    TODO: Create AUTH_REQUEST packet with credentials
+    TODO: Create AUTH_RESPONSE packet with token
+    TODO: Create SESSION_DATA packet
+    TODO: Display all packets
+    """
+    pass
+
+if __name__ == "__main__":
+    create_auth_session()
+Task 4: Test Custom Protocols Against Target Systems
+Step 1: Create a Test Server
+# File: protocol_server.py
+#!/usr/bin/env python3
+
+import socket
+import struct
+import threading
+
+class ProtocolTestServer:
+    """
+    Simple UDP server to test SecureComm protocol
+    
+    TODO: Initialize socket on port 9999
+    TODO: Implement receive loop
+    TODO: Parse incoming SecureComm packets
+    TODO: Send ACK responses
+    """
+    
+    def __init__(self, port=9999):
+        self.port = port
+        self.running = False
+    
+    def start_server(self):
+        """
+        Start the UDP server.
+        
+        TODO: Create UDP socket
+        TODO: Bind to localhost:port
+        TODO: Receive and process packets
+        TODO: Call process_packet for each received packet
+        """
+        pass
+    
+    def process_packet(self, data, addr):
+        """
+        Process received SecureComm packets.
+        
+        TODO: Extract magic number from data
+        TODO: Verify magic == 0x53434D4D
+        TODO: Parse msg_type and sequence
+        TODO: Send ACK response
+        """
+        pass
+    
+    def create_ack(self, sequence):
+        """
+        Create ACK response packet.
+        
+        TODO: Build SecureComm header with msg_type=3
+        TODO: Use received sequence number
+        TODO: Return packed bytes
+        """
+        pass
+
+if __name__ == "__main__":
+    server = ProtocolTestServer()
+    server.start_server()
+Start the server:
+
+sudo python3 protocol_server.py &
+Step 2: Create Protocol Tester
+# File: protocol_tester.py
+#!/usr/bin/env python3
+
+from scapy.all import *
+from secure_comm_protocol import SecureCommHeader
+import time
+
+class ProtocolTester:
+    """
+    Test custom protocols against target systems
+    
+    TODO: Implement test methods for each protocol
+    TODO: Capture and analyze responses
+    TODO: Generate test reports
+    """
+    
+    def __init__(self):
+        self.results = []
+    
+    def test_secure_comm(self, target_ip="127.0.0.1", port=9999):
+        """
+        Test SecureComm protocol.
+        
+        TODO: Create test packets for each message type
+        TODO: Send packets using sr1() to capture responses
+        TODO: Record results (success/failure)
+        TODO: Print response details
+        """
+        pass
+    
+    def fuzz_test(self, target_ip="127.0.0.1"):
+        """
+        Perform fuzzing tests on custom protocols.
+        
+        TODO: Create packets with invalid magic numbers
+        TODO: Test with invalid version numbers
+        TODO: Send unknown message types
+        TODO: Test boundary conditions
+        """
+        pass
+    
+    def generate_report(self):
+        """
+        Generate test report.
+        
+        TODO: Calculate success rate
+        TODO: List all test results
+        TODO: Identify anomalies
+        """
+        pass
+
+if __name__ == "__main__":
+    tester = ProtocolTester()
+    tester.test_secure_comm()
+    tester.fuzz_test()
+    tester.generate_report()
+Run tests:
+
+sudo python3 protocol_tester.py
+Step 3: Capture and Analyze Traffic
+Start packet capture during testing:
+
+# Terminal 1: Start capture
+sudo tcpdump -i lo -w custom_protocols.pcap port 9999 &
+
+# Terminal 2: Run tests
+sudo python3 protocol_tester.py
+
+# Stop capture after tests complete
+sudo pkill tcpdump
+Task 5: Analyze Custom Protocol Traffic
+Step 1: Create Packet Analyzer
+# File: packet_analyzer.py
+#!/usr/bin/env python3
+
+from scapy.all import *
+import struct
+
+class CustomProtocolAnalyzer:
+    """
+    Analyze custom protocol packets from pcap files
+    
+    TODO: Load and parse pcap files
+    TODO: Identify custom protocol packets
+    TODO: Validate packet structure
+    TODO: Detect anomalies
+    """
+    
+    def __init__(self):
+        self.protocols_found = {}
+        self.anomalies = []
+    
+    def analyze_pcap(self, filename):
+        """
+        Analyze packets from pcap file.
+        
+        TODO: Load pcap using rdpcap()
+        TODO: Iterate through packets
+        TODO: Call analyze_packet for each packet
+        """
+        pass
+    
+    def analyze_packet(self, pkt, pkt_num):
+        """
+        Analyze individual packet.
+        
+        TODO: Check if UDP port 9999 (SecureComm)
+        TODO: Extract and parse protocol header
+        TODO: Validate magic number
+        TODO: Check message type validity
+        """
+        pass
+    
+    def validate_packet(self, payload, pkt_num):
+        """
+        Validate packet integrity.
+        
+        TODO: Verify version number
+        TODO: Check message type is valid (1-4)
+        TODO: Validate payload length matches actual
+        TODO: Verify checksum
+        """
+        pass
+    
+    def generate_report(self):
+        """
+        Generate analysis report.
+        
+        TODO: Count packets per protocol
+        TODO: List all anomalies found
+        TODO: Calculate statistics
+        """
+        pass
+
+if __name__ == "__main__":
+    analyzer = CustomProtocolAnalyzer()
+    analyzer.analyze_pcap("custom_protocols.pcap")
+    analyzer.generate_report()
+Run analysis:
+
+sudo python3 packet_analyzer.py
+Step 2: Visualize with Wireshark
+Open captured traffic in Wireshark:
+
+wireshark custom_protocols.pcap &
+Analysis tasks:
+
+Filter for UDP port 9999: udp.port == 9999
+Examine packet hex dumps
+Verify protocol field values
+Identify any malformed packets
+Expected Outcomes
+After completing this lab, you should have:
+
+Working custom protocol implementations for SecureComm and AuthProtocol
+Test infrastructure including server and client testing tools
+Packet captures demonstrating protocol communication
+Analysis tools to validate protocol behavior
+Understanding of how to create and test proprietary protocols with Scapy
+Verification checklist:
+
+Custom layers bind correctly to transport protocols
+Packets display properly with show() method
+post_build() correctly calculates checksums and lengths
+Test server receives and responds to custom packets
+Packet analyzer correctly identifies and validates custom protocols
+Troubleshooting Tips
+Issue 1: Import Errors
+Problem: ModuleNotFoundError: No module named 'scapy'
+
+Solution:
+
+sudo pip3 install scapy
+# or
+sudo apt-get install python3-scapy
+Issue 2: Permission Denied
+Problem: Socket permission errors when running scripts
+
+Solution:
+
+# Run with sudo for raw socket access
+sudo python3 your_script.py
+
+# Or add capabilities (permanent solution)
+sudo setcap cap_net_raw+ep $(which python3)
+Issue 3: Packets Not Captured
+Problem: tcpdump or Wireshark shows no packets
+
+Solution:
+
+Verify correct interface: ip addr show
+For localhost testing, use lo interface
+Check firewall rules: sudo iptables -L
+Ensure server is running: ps aux | grep python
+Issue 4: Custom Layer Not Recognized
+Problem: Scapy doesn't recognize custom layer in packets
+
+Solution:
+
+Verify bind_layers() is called correctly
+Check port numbers match in bind_layers and packets
+Import custom layer module before creating packets
+Use ls() to list available layers
+Conclusion
+In this lab, you learned to create custom Scapy protocol layers for proprietary network protocols. You implemented two custom protocols (SecureComm and AuthProtocol), created testing infrastructure, and developed analysis tools to validate protocol behavior.
+
+Key takeaways:
+
+Custom Scapy layers use fields_desc to define packet structure
+post_build() method enables dynamic field calculation
+bind_layers() associates custom layers with transport protocols
+Testing requires both client and server components
+Packet capture and analysis validate protocol implementations
+Next steps:
+
+Extend protocols with encryption capabilities
+Implement stateful protocol sessions
+Create dissectors for Wireshark
+Apply custom layers to real penetration testing scenarios
+Develop automated protocol fuzzing tools
+These skills are valuable for reverse engineering proprietary protocols, developing custom network tools, and conducting advanced security assessments.
