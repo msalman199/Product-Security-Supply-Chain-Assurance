@@ -1,0 +1,46 @@
+{
+  "vulnerabilities": [
+    {
+      "id": "VULN-001",
+      "name": "SQL Injection in Login Form",
+      "description": "Unauthenticated SQL injection vulnerability",
+      "cve": "CVE-2023-12345",
+      "attack_vector": "Network",
+      "attack_complexity": "Low",
+      "privileges_required": "None",
+      "user_interaction": "None",
+      "scope": "Unchanged",
+      "confidentiality_impact": "High",
+      "integrity_impact": "High",
+      "availability_impact": "High"
+    },
+    {
+      "id": "VULN-002",
+      "name": "Stored XSS Vulnerability",
+      "description": "Stored XSS in comment section",
+      "cve": "CVE-2023-12346",
+      "attack_vector": "Network",
+      "attack_complexity": "Low",
+      "privileges_required": "Low",
+      "user_interaction": "Required",
+      "scope": "Changed",
+      "confidentiality_impact": "Low",
+      "integrity_impact": "Low",
+      "availability_impact": "None"
+    },
+    {
+      "id": "VULN-003",
+      "name": "Local Privilege Escalation",
+      "description": "Privilege escalation via misconfigured service",
+      "cve": "CVE-2023-12347",
+      "attack_vector": "Local",
+      "attack_complexity": "Low",
+      "privileges_required": "Low",
+      "user_interaction": "None",
+      "scope": "Unchanged",
+      "confidentiality_impact": "High",
+      "integrity_impact": "High",
+      "availability_impact": "High"
+    }
+  ]
+}
